@@ -5,10 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ASTR Healthcare — Trusted Pharma Distribution Since 1969</title>
   <meta name="description" content="ASTR Healthcare — 50+ years of trusted pharma distribution across Madhya Pradesh. Powered by Ashok Traders, Indore." />
-  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" type="image/jpeg" href="assets/ashok-collatorals/logo-sm.jpg" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://cdn.tailwindcss.com" />
+  <link rel="preload" as="image" href="assets/ashok-collatorals/company-logo-opt.jpg" fetchpriority="high" />
+  <link rel="preload" as="image" href="assets/ashok-collatorals/company-list-opt.jpg" />
+
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" /></noscript>
+  <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       theme: {
@@ -115,7 +122,7 @@
   <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-soft-grey/60 transition-shadow duration-300">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16 md:h-18">
       <a href="#" class="flex items-center gap-2 group">
-        <img src="assets/ashok-collatorals/logo.jpg" alt="Ashok Traders" class="w-9 h-9 rounded-lg object-cover" />
+        <img src="assets/ashok-collatorals/logo-sm.jpg" alt="Ashok Traders" width="36" height="36" class="w-9 h-9 rounded-lg object-cover" decoding="async" />
         <div class="leading-tight">
           <span class="font-display font-bold text-brand text-lg tracking-tight">ASTR</span>
           <span class="hidden sm:inline text-xs text-medium ml-1">Healthcare</span>
@@ -198,10 +205,10 @@
         <div class="relative rounded-3xl overflow-hidden bg-gradient-to-br from-brand/5 to-cyan/5 aspect-[4/3] shadow-2xl shadow-brand/10">
           <div class="hero-carousel absolute inset-0">
             <div class="slide">
-              <img src="assets/ashok-collatorals/company-logo.jpg" alt="Ashok Traders partner companies" class="w-full h-full object-cover" />
+              <img src="assets/ashok-collatorals/company-logo-opt.jpg" alt="Ashok Traders partner companies" width="1200" height="900" class="w-full h-full object-cover" fetchpriority="high" decoding="async" />
             </div>
             <div class="slide">
-              <img src="assets/ashok-collatorals/company-list.jpg" alt="Ashok Traders company list" class="w-full h-full object-cover" />
+              <img src="assets/ashok-collatorals/company-list-opt.jpg" alt="Ashok Traders company list" width="1200" height="900" class="w-full h-full object-cover" decoding="async" />
             </div>
           </div>
           <div class="absolute inset-0 bg-gradient-to-t from-brand/30 via-transparent to-transparent pointer-events-none"></div>
@@ -259,84 +266,7 @@
       <div class="fade-up fade-up-delay-1 mt-12 overflow-hidden relative">
         <div class="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-light-grey to-transparent z-10"></div>
         <div class="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-light-grey to-transparent z-10"></div>
-        <div class="logo-scroll flex items-center gap-12 w-max">
-          <div class="flex items-center gap-12">
-            <div class="group flex-shrink-0 w-40 h-20 bg-white rounded-xl border border-soft-grey flex items-center justify-center px-6 hover:border-brand/20 hover:shadow-md transition-all">
-              <img src="assets/logos/aglowmed.png" alt="Aglowmed" class="h-12 w-auto opacity-80 group-hover:opacity-100 transition-opacity" />
-            </div>
-            <div class="group flex-shrink-0 w-40 h-20 bg-white rounded-xl border border-soft-grey flex items-center justify-center px-6 hover:border-brand/20 hover:shadow-md transition-all">
-              <img src="assets/logos/alembic.png" alt="Alembic" class="h-8 w-auto opacity-80 group-hover:opacity-100 transition-opacity" />
-            </div>
-            <div class="group flex-shrink-0 w-40 h-20 bg-white rounded-xl border border-soft-grey flex items-center justify-center px-6 hover:border-brand/20 hover:shadow-md transition-all">
-              <img src="assets/logos/alkem.svg" alt="Alkem" class="h-8 w-auto opacity-80 group-hover:opacity-100 transition-opacity" />
-            </div>
-            <div class="group flex-shrink-0 w-40 h-20 bg-white rounded-xl border border-soft-grey flex items-center justify-center px-6 hover:border-brand/20 hover:shadow-md transition-all">
-              <img src="assets/logos/bluecross.png" alt="Bluecross" class="h-16 w-auto opacity-80 group-hover:opacity-100 transition-opacity" />
-            </div>
-            <div class="group flex-shrink-0 w-40 h-20 bg-white rounded-xl border border-soft-grey flex items-center justify-center px-6 hover:border-brand/20 hover:shadow-md transition-all">
-              <img src="assets/logos/boehringer.png" alt="Boehringer" class="h-9 w-auto opacity-80 group-hover:opacity-100 transition-opacity" />
-            </div>
-            <div class="group flex-shrink-0 w-40 h-20 bg-white rounded-xl border border-soft-grey flex items-center justify-center px-6 hover:border-brand/20 hover:shadow-md transition-all">
-              <img src="assets/logos/british.png" alt="British" class="h-10 w-auto opacity-80 group-hover:opacity-100 transition-opacity" />
-            </div>
-            <div class="group flex-shrink-0 w-40 h-20 bg-white rounded-xl border border-soft-grey flex items-center justify-center px-6 hover:border-brand/20 hover:shadow-md transition-all">
-              <img src="assets/logos/cavin.jpeg" alt="Cavin" class="h-9 w-auto opacity-80 group-hover:opacity-100 transition-opacity" />
-            </div>
-            <div class="group flex-shrink-0 w-40 h-20 bg-white rounded-xl border border-soft-grey flex items-center justify-center px-6 hover:border-brand/20 hover:shadow-md transition-all">
-              <img src="assets/logos/gsk.svg" alt="GSK" class="h-6 w-auto opacity-80 group-hover:opacity-100 transition-opacity" />
-            </div>
-            <div class="group flex-shrink-0 w-40 h-20 bg-white rounded-xl border border-soft-grey flex items-center justify-center px-6 hover:border-brand/20 hover:shadow-md transition-all">
-              <img src="assets/logos/himalaya.svg" alt="Himalaya" class="h-8 w-auto opacity-80 group-hover:opacity-100 transition-opacity" />
-            </div>
-            <div class="group flex-shrink-0 w-40 h-20 bg-white rounded-xl border border-soft-grey flex items-center justify-center px-6 hover:border-brand/20 hover:shadow-md transition-all">
-              <img src="assets/logos/menarini.png" alt="Menarini" class="h-10 w-auto opacity-80 group-hover:opacity-100 transition-opacity" />
-            </div>
-            <div class="group flex-shrink-0 w-40 h-20 bg-white rounded-xl border border-soft-grey flex items-center justify-center px-6 hover:border-brand/20 hover:shadow-md transition-all">
-              <img src="assets/logos/sun-pharma.jpeg" alt="Sun Pharma" class="h-16 w-auto opacity-80 group-hover:opacity-100 transition-opacity" />
-            </div>
-            <div class="group flex-shrink-0 w-40 h-20 bg-white rounded-xl border border-soft-grey flex items-center justify-center px-6 hover:border-brand/20 hover:shadow-md transition-all">
-              <img src="assets/logos/torrent.png" alt="Torrent" class="h-8 w-auto opacity-80 group-hover:opacity-100 transition-opacity" />
-            </div>
-          </div>
-          <div class="flex items-center gap-12" aria-hidden="true">
-            <div class="flex-shrink-0 w-40 h-20 bg-white rounded-xl border border-soft-grey flex items-center justify-center px-6">
-              <img src="assets/logos/aglowmed.png" alt="" class="h-12 w-auto opacity-80" />
-            </div>
-            <div class="flex-shrink-0 w-40 h-20 bg-white rounded-xl border border-soft-grey flex items-center justify-center px-6">
-              <img src="assets/logos/alembic.png" alt="" class="h-8 w-auto opacity-80" />
-            </div>
-            <div class="flex-shrink-0 w-40 h-20 bg-white rounded-xl border border-soft-grey flex items-center justify-center px-6">
-              <img src="assets/logos/alkem.svg" alt="" class="h-8 w-auto opacity-80" />
-            </div>
-            <div class="flex-shrink-0 w-40 h-20 bg-white rounded-xl border border-soft-grey flex items-center justify-center px-6">
-              <img src="assets/logos/bluecross.png" alt="" class="h-16 w-auto opacity-80" />
-            </div>
-            <div class="flex-shrink-0 w-40 h-20 bg-white rounded-xl border border-soft-grey flex items-center justify-center px-6">
-              <img src="assets/logos/boehringer.png" alt="" class="h-9 w-auto opacity-80" />
-            </div>
-            <div class="flex-shrink-0 w-40 h-20 bg-white rounded-xl border border-soft-grey flex items-center justify-center px-6">
-              <img src="assets/logos/british.png" alt="" class="h-10 w-auto opacity-80" />
-            </div>
-            <div class="flex-shrink-0 w-40 h-20 bg-white rounded-xl border border-soft-grey flex items-center justify-center px-6">
-              <img src="assets/logos/cavin.jpeg" alt="" class="h-9 w-auto opacity-80" />
-            </div>
-            <div class="flex-shrink-0 w-40 h-20 bg-white rounded-xl border border-soft-grey flex items-center justify-center px-6">
-              <img src="assets/logos/gsk.svg" alt="" class="h-6 w-auto opacity-80" />
-            </div>
-            <div class="flex-shrink-0 w-40 h-20 bg-white rounded-xl border border-soft-grey flex items-center justify-center px-6">
-              <img src="assets/logos/himalaya.svg" alt="" class="h-8 w-auto opacity-80" />
-            </div>
-            <div class="flex-shrink-0 w-40 h-20 bg-white rounded-xl border border-soft-grey flex items-center justify-center px-6">
-              <img src="assets/logos/menarini.png" alt="" class="h-10 w-auto opacity-80" />
-            </div>
-            <div class="flex-shrink-0 w-40 h-20 bg-white rounded-xl border border-soft-grey flex items-center justify-center px-6">
-              <img src="assets/logos/sun-pharma.jpeg" alt="" class="h-16 w-auto opacity-80" />
-            </div>
-            <div class="flex-shrink-0 w-40 h-20 bg-white rounded-xl border border-soft-grey flex items-center justify-center px-6">
-              <img src="assets/logos/torrent.png" alt="" class="h-8 w-auto opacity-80" />
-            </div>
-          </div>
-        </div>
+        <div id="logo-track" class="logo-scroll flex items-center gap-12 w-max"></div>
       </div>
       <p class="fade-up fade-up-delay-2 mt-8 text-medium font-semibold">+ 20 more leading pharma companies</p>
     </div>
@@ -748,7 +678,7 @@
       <div class="grid md:grid-cols-3 gap-8 items-center">
         <div>
           <div class="flex items-center gap-3">
-            <img src="assets/ashok-collatorals/logo.jpg" alt="Ashok Traders" class="w-10 h-10 rounded-xl object-cover" />
+            <img src="assets/ashok-collatorals/logo-sm.jpg" alt="Ashok Traders" width="40" height="40" class="w-10 h-10 rounded-xl object-cover" loading="lazy" decoding="async" />
             <div>
               <span class="font-display font-bold text-white text-xl tracking-tight">ASTR Healthcare</span>
             </div>
@@ -787,6 +717,32 @@
 
   <!-- ==================== SCRIPTS ==================== -->
   <script>
+    // Render the partner-logos carousel from a single source list.
+    const partnerLogos = [
+      { src: 'assets/logos/aglowmed.png',   alt: 'Aglowmed',   h: 'h-12' },
+      { src: 'assets/logos/alembic.png',    alt: 'Alembic',    h: 'h-8'  },
+      { src: 'assets/logos/alkem.svg',      alt: 'Alkem',      h: 'h-8'  },
+      { src: 'assets/logos/bluecross.png',  alt: 'Bluecross',  h: 'h-16' },
+      { src: 'assets/logos/boehringer.png', alt: 'Boehringer', h: 'h-9'  },
+      { src: 'assets/logos/british.png',    alt: 'British',    h: 'h-10' },
+      { src: 'assets/logos/cavin.jpeg',     alt: 'Cavin',      h: 'h-9'  },
+      { src: 'assets/logos/gsk.png',        alt: 'GSK',        h: 'h-6'  },
+      { src: 'assets/logos/himalaya.svg',   alt: 'Himalaya',   h: 'h-8'  },
+      { src: 'assets/logos/menarini.png',   alt: 'Menarini',   h: 'h-10' },
+      { src: 'assets/logos/sun-pharma.jpeg',alt: 'Sun Pharma', h: 'h-16' },
+      { src: 'assets/logos/torrent.png',    alt: 'Torrent',    h: 'h-8'  },
+    ];
+    const buildLogoSet = (ariaHidden) => partnerLogos.map(l => `
+      <div class="group flex-shrink-0 w-40 h-20 bg-white rounded-xl border border-soft-grey flex items-center justify-center px-6 hover:border-brand/20 hover:shadow-md transition-all">
+        <img src="${l.src}" alt="${ariaHidden ? '' : l.alt}" class="${l.h} w-auto opacity-80 group-hover:opacity-100 transition-opacity" loading="lazy" decoding="async" />
+      </div>`).join('');
+    const logoTrack = document.getElementById('logo-track');
+    if (logoTrack) {
+      logoTrack.innerHTML =
+        `<div class="flex items-center gap-12">${buildLogoSet(false)}</div>` +
+        `<div class="flex items-center gap-12" aria-hidden="true">${buildLogoSet(true)}</div>`;
+    }
+
     // Intersection Observer for fade-in animations
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
