@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Medicine Catalog — ASTR Healthcare</title>
+  <meta name="description" content="Browse the complete medicine catalog from ASTR Healthcare. Search by medicine name, drug/salt composition, or company." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: '#1F3C88',
+            'brand-hover': '#2E5BFF',
+            cyan: '#00B4D8',
+            pink: '#FF4D8D',
+            dark: '#1F2937',
+            medium: '#6B7280',
+            'light-grey': '#F5F7FA',
+            'soft-grey': '#E5E7EB',
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Poppins', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    .nav-link { position: relative; }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: #2E5BFF;
+      transition: width 0.3s;
+    }
+    .nav-link:hover::after { width: 100%; }
+
+    .search-glow:focus {
+      box-shadow: 0 0 0 4px rgba(31, 60, 136, 0.1), 0 4px 20px rgba(31, 60, 136, 0.08);
+    }
+
+    .medicine-card {
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .medicine-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(31, 60, 136, 0.08);
+    }
+
+    .highlight {
+      background: linear-gradient(120deg, rgba(0, 180, 216, 0.15) 0%, rgba(0, 180, 216, 0.15) 100%);
+      border-radius: 2px;
+      padding: 0 2px;
+    }
+  </style>
+</head>
+<body class="font-sans text-dark antialiased bg-light-grey min-h-screen">
+
+  <!-- Navbar -->
+  <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-soft-grey/60 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16 md:h-18">
+      <a href="index.html" class="flex items-center gap-2 group">
+        <img src="assets/ashok-collatorals/logo.jpg" alt="Ashok Traders" class="w-9 h-9 rounded-lg object-cover" />
+        <div class="leading-tight">
+          <span class="font-display font-bold text-brand text-lg tracking-tight">ASTR</span>
+          <span class="hidden sm:inline text-xs text-medium ml-1">Healthcare</span>
+        </div>
+      </a>
+
+      <div class="hidden lg:flex items-center gap-8 text-sm font-medium text-medium">
+        <a href="index.html" class="nav-link hover:text-brand transition-colors">Home</a>
+        <a href="index.html#brands" class="nav-link hover:text-brand transition-colors">Brands</a>
+        <a href="index.html#divisions" class="nav-link hover:text-brand transition-colors">Divisions</a>
+        <a href="index.html#contact" class="nav-link hover:text-brand transition-colors">Contact</a>
+        <span class="nav-link text-brand font-semibold border-b-2 border-brand pb-0.5">Catalog</span>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <a href="index.html#contact" class="hidden sm:inline-flex items-center gap-2 px-5 py-2.5 bg-brand text-white text-sm font-semibold rounded-lg hover:bg-brand-hover transition-colors">
+          Place Order
+        </a>
+        <button id="mobile-toggle" class="lg:hidden p-2 rounded-lg hover:bg-light-grey transition-colors" aria-label="Menu">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="lg:hidden hidden border-t border-soft-grey bg-white">
+      <div class="px-4 py-4 space-y-2">
+        <a href="index.html" class="block px-3 py-2 rounded-lg text-sm font-medium text-medium hover:text-brand hover:bg-light-grey transition-colors">Home</a>
+        <a href="index.html#brands" class="block px-3 py-2 rounded-lg text-sm font-medium text-medium hover:text-brand hover:bg-light-grey transition-colors">Brands</a>
+        <a href="index.html#contact" class="block px-3 py-2 rounded-lg text-sm font-medium text-medium hover:text-brand hover:bg-light-grey transition-colors">Contact</a>
+        <span class="block px-3 py-2 rounded-lg text-sm font-semibold text-brand bg-brand/5">Catalog</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <section class="pt-24 md:pt-28 pb-6 md:pb-8 bg-white border-b border-soft-grey">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center">
+        <p class="text-sm font-semibold text-cyan uppercase tracking-widest mb-2">Product Catalog</p>
+        <h1 class="font-display text-3xl md:text-4xl font-extrabold text-dark">
+          Available <span class="text-brand">Medicines</span>
+        </h1>
+        <p class="mt-3 text-medium max-w-2xl mx-auto">
+          Search our complete stock by medicine name, drug/salt composition, or company name.
+        </p>
+      </div>
+
+      <!-- Search Box -->
+      <div class="mt-8 max-w-3xl mx-auto">
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+            <svg class="w-5 h-5 text-medium" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          </div>
+          <input
+            type="text"
+            id="search-input"
+            placeholder="Search by medicine name, salt/drug, or company..."
+            class="search-glow w-full pl-12 pr-4 py-4 bg-light-grey border-2 border-soft-grey rounded-2xl text-base focus:outline-none focus:border-brand transition-all"
+            autocomplete="off"
+          />
+          <div class="absolute inset-y-0 right-0 pr-4 flex items-center">
+            <button id="clear-btn" class="hidden p-1.5 rounded-lg hover:bg-soft-grey text-medium hover:text-dark transition-colors" aria-label="Clear search">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter Chips -->
+        <div class="mt-4 flex flex-wrap items-center gap-2">
+          <span class="text-xs font-medium text-medium">Filter by:</span>
+          <button data-filter="all" class="filter-chip active px-3 py-1.5 rounded-full text-xs font-semibold border transition-all bg-brand text-white border-brand">All</button>
+          <button data-filter="name" class="filter-chip px-3 py-1.5 rounded-full text-xs font-semibold border transition-all bg-white text-medium border-soft-grey hover:border-brand hover:text-brand">Medicine Name</button>
+          <button data-filter="salt" class="filter-chip px-3 py-1.5 rounded-full text-xs font-semibold border transition-all bg-white text-medium border-soft-grey hover:border-brand hover:text-brand">Drug / Salt</button>
+          <button data-filter="company" class="filter-chip px-3 py-1.5 rounded-full text-xs font-semibold border transition-all bg-white text-medium border-soft-grey hover:border-brand hover:text-brand">Company</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Results Section -->
+  <section class="py-6 md:py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- Stats bar -->
+      <div class="flex items-center justify-between mb-4">
+        <p id="results-count" class="text-sm text-medium font-medium"></p>
+        <p id="showing-info" class="text-sm text-medium"></p>
+      </div>
+
+      <!-- Loading State -->
+      <div id="loading-state" class="flex flex-col items-center justify-center py-20">
+        <div class="w-10 h-10 border-4 border-brand/20 border-t-brand rounded-full animate-spin"></div>
+        <p class="mt-4 text-medium font-medium">Loading catalog...</p>
+      </div>
+
+      <!-- Empty State -->
+      <div id="empty-state" class="hidden flex flex-col items-center justify-center py-20">
+        <div class="w-16 h-16 rounded-full bg-soft-grey flex items-center justify-center mb-4">
+          <svg class="w-8 h-8 text-medium" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <h3 class="font-display font-bold text-dark text-lg">No medicines found</h3>
+        <p class="mt-1 text-medium text-sm">Try a different search term or adjust your filters.</p>
+      </div>
+
+      <!-- Initial State (before search) -->
+      <div id="initial-state" class="hidden flex flex-col items-center justify-center py-16">
+        <div class="w-16 h-16 rounded-full bg-brand/5 flex items-center justify-center mb-4">
+          <svg class="w-8 h-8 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        </div>
+        <h3 class="font-display font-bold text-dark text-lg">Search our catalog</h3>
+        <p class="mt-1 text-medium text-sm text-center max-w-md">Start typing to search across <span id="total-count" class="font-semibold text-brand">3000+</span> medicines by name, salt, or company.</p>
+      </div>
+
+      <!-- Results Grid -->
+      <div id="results-grid" class="hidden grid gap-3"></div>
+
+      <!-- Load More -->
+      <div id="load-more-container" class="hidden flex justify-center mt-8">
+        <button id="load-more-btn" class="px-6 py-3 bg-white border-2 border-brand text-brand font-semibold rounded-xl hover:bg-brand hover:text-white transition-all">
+          Show More Results
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-dark py-8 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <img src="assets/ashok-collatorals/logo.jpg" alt="Ashok Traders" class="w-8 h-8 rounded-lg object-cover" />
+          <span class="font-display font-bold text-white text-lg tracking-tight">ASTR Healthcare</span>
+        </div>
+        <p class="text-sm text-white/40">&copy; 2026 ASTR Healthcare. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    let allData = [];
+    let filteredData = [];
+    let currentFilter = 'all';
+    let displayCount = 50;
+    const BATCH_SIZE = 50;
+
+    // Load CSV
+    Papa.parse('assets/Ashok Stock.csv', {
+      download: true,
+      header: true,
+      skipEmptyLines: true,
+      complete: function(results) {
+        allData = results.data
+          .filter(row => row.name && row.name.trim())
+          .map(row => ({
+            name: (row.name || '').trim(),
+            salt: (row.Salt || '').trim(),
+            mrp: (row.mrp || '').trim(),
+            company: (row.company || '').trim(),
+          }));
+
+        document.getElementById('total-count').textContent = allData.length.toLocaleString();
+        document.getElementById('loading-state').classList.add('hidden');
+        document.getElementById('initial-state').classList.remove('hidden');
+        document.getElementById('results-count').textContent = `${allData.length.toLocaleString()} medicines available`;
+      }
+    });
+
+    const searchInput = document.getElementById('search-input');
+    const clearBtn = document.getElementById('clear-btn');
+    const resultsGrid = document.getElementById('results-grid');
+    const emptyState = document.getElementById('empty-state');
+    const initialState = document.getElementById('initial-state');
+    const loadMoreContainer = document.getElementById('load-more-container');
+    const loadMoreBtn = document.getElementById('load-more-btn');
+    const resultsCount = document.getElementById('results-count');
+    const showingInfo = document.getElementById('showing-info');
+
+    let debounceTimer;
+    searchInput.addEventListener('input', function() {
+      clearTimeout(debounceTimer);
+      const query = this.value.trim();
+      clearBtn.classList.toggle('hidden', !query);
+      debounceTimer = setTimeout(() => performSearch(query), 150);
+    });
+
+    clearBtn.addEventListener('click', function() {
+      searchInput.value = '';
+      clearBtn.classList.add('hidden');
+      performSearch('');
+      searchInput.focus();
+    });
+
+    // Filter chips
+    document.querySelectorAll('.filter-chip').forEach(chip => {
+      chip.addEventListener('click', function() {
+        document.querySelectorAll('.filter-chip').forEach(c => {
+          c.classList.remove('active', 'bg-brand', 'text-white', 'border-brand');
+          c.classList.add('bg-white', 'text-medium', 'border-soft-grey');
+        });
+        this.classList.add('active', 'bg-brand', 'text-white', 'border-brand');
+        this.classList.remove('bg-white', 'text-medium', 'border-soft-grey');
+        currentFilter = this.dataset.filter;
+        performSearch(searchInput.value.trim());
+      });
+    });
+
+    loadMoreBtn.addEventListener('click', function() {
+      displayCount += BATCH_SIZE;
+      renderResults();
+    });
+
+    function performSearch(query) {
+      displayCount = BATCH_SIZE;
+
+      if (!query) {
+        resultsGrid.classList.add('hidden');
+        emptyState.classList.add('hidden');
+        initialState.classList.remove('hidden');
+        loadMoreContainer.classList.add('hidden');
+        resultsCount.textContent = `${allData.length.toLocaleString()} medicines available`;
+        showingInfo.textContent = '';
+        return;
+      }
+
+      const terms = query.toLowerCase().split(/\s+/).filter(Boolean);
+
+      filteredData = allData.filter(item => {
+        const nameMatch = terms.every(t => item.name.toLowerCase().includes(t));
+        const saltMatch = terms.every(t => item.salt.toLowerCase().includes(t));
+        const companyMatch = terms.every(t => item.company.toLowerCase().includes(t));
+
+        if (currentFilter === 'name') return nameMatch;
+        if (currentFilter === 'salt') return saltMatch;
+        if (currentFilter === 'company') return companyMatch;
+        return nameMatch || saltMatch || companyMatch;
+      });
+
+      initialState.classList.add('hidden');
+
+      if (filteredData.length === 0) {
+        resultsGrid.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+        loadMoreContainer.classList.add('hidden');
+        resultsCount.textContent = 'No results found';
+        showingInfo.textContent = '';
+      } else {
+        emptyState.classList.add('hidden');
+        resultsGrid.classList.remove('hidden');
+        renderResults();
+      }
+    }
+
+    function renderResults() {
+      const toShow = filteredData.slice(0, displayCount);
+      const query = searchInput.value.trim().toLowerCase();
+
+      resultsCount.textContent = `${filteredData.length.toLocaleString()} result${filteredData.length !== 1 ? 's' : ''} found`;
+      showingInfo.textContent = filteredData.length > displayCount
+        ? `Showing ${toShow.length} of ${filteredData.length.toLocaleString()}`
+        : '';
+
+      resultsGrid.innerHTML = toShow.map(item => {
+        const name = highlightText(item.name, query);
+        const salt = highlightText(item.salt, query);
+        const company = highlightText(item.company, query);
+        const mrp = item.mrp ? `₹${parseFloat(item.mrp).toFixed(2)}` : '—';
+
+        return `
+          <div class="medicine-card bg-white rounded-xl border border-soft-grey/80 p-4 sm:p-5">
+            <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-4">
+              <div class="flex-1 min-w-0">
+                <h3 class="font-semibold text-dark text-sm sm:text-base leading-tight">${name}</h3>
+                <p class="mt-1.5 text-xs sm:text-sm text-medium leading-relaxed">
+                  <span class="inline-flex items-center gap-1">
+                    <svg class="w-3.5 h-3.5 text-cyan flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+                    ${salt || '<span class="italic text-medium/50">Not specified</span>'}
+                  </span>
+                </p>
+              </div>
+              <div class="flex items-center gap-3 sm:flex-col sm:items-end sm:gap-1.5">
+                <span class="font-display font-bold text-brand text-base sm:text-lg">${mrp}</span>
+                <span class="text-xs text-medium bg-light-grey px-2 py-0.5 rounded-md font-medium truncate max-w-[180px]" title="${item.company}">${company}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      if (filteredData.length > displayCount) {
+        loadMoreContainer.classList.remove('hidden');
+      } else {
+        loadMoreContainer.classList.add('hidden');
+      }
+    }
+
+    function highlightText(text, query) {
+      if (!text || !query) return escapeHtml(text);
+      const terms = query.split(/\s+/).filter(Boolean);
+      let result = escapeHtml(text);
+      terms.forEach(term => {
+        const regex = new RegExp(`(${escapeRegex(term)})`, 'gi');
+        result = result.replace(regex, '<span class="highlight">$1</span>');
+      });
+      return result;
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    function escapeRegex(str) {
+      return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    // Mobile menu toggle
+    const toggle = document.getElementById('mobile-toggle');
+    const menu = document.getElementById('mobile-menu');
+    toggle.addEventListener('click', () => menu.classList.toggle('hidden'));
+    menu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => menu.classList.add('hidden'));
+    });
+  </script>
+
+</body>
+</html>
