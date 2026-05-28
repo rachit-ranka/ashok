@@ -3,11 +3,28 @@
   class="nav-link hover:text-brand transition-colors"
   >Blog</a
 >
-<!DOCTYPE html>
+<!doctype html>
 <html
   lang="en"
   class="scroll-smooth">
   <head>
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="assets/ashok-collatorals/favicon/favicon-32x32.png" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="assets/ashok-collatorals/favicon/favicon-16x16.png" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="assets/ashok-collatorals/favicon/apple-touch-icon.png" />
+    <link
+      rel="manifest"
+      href="assets/ashok-collatorals/favicon/site.webmanifest" />
     <meta charset="UTF-8" />
     <meta
       name="viewport"
@@ -133,9 +150,8 @@
         <dl>
           <dt>What services does Ashok Traders provide?</dt>
           <dd>
-            Ashok Traders offers pharmaceutical distribution, stockist services, hospital supply, cold chain
-            logistics, OTC and generic medicine distribution, warehousing, and C&F operations across Indore and Central
-            India.
+            Ashok Traders offers pharmaceutical distribution, stockist services, hospital supply, cold chain logistics,
+            OTC and generic medicine distribution, warehousing, and C&F operations across Indore and Central India.
           </dd>
           <dt>Who can partner with Ashok Traders?</dt>
           <dd>
@@ -144,8 +160,8 @@
           </dd>
           <dt>What is the coverage area for Ashok Traders?</dt>
           <dd>
-            Ashok Traders serves Indore, Central India, and businesses across India with a strong retailer and
-            hospital network.
+            Ashok Traders serves Indore, Central India, and businesses across India with a strong retailer and hospital
+            network.
           </dd>
           <dt>How can I place an order or make an enquiry?</dt>
           <dd>
@@ -239,7 +255,10 @@
       rel="preload"
       as="style"
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap"
-      onload="this.onload=null;this.rel='stylesheet'" />
+      onload="
+        this.onload = null;
+        this.rel = 'stylesheet';
+      " />
     <noscript
       ><link
         rel="stylesheet"
@@ -272,7 +291,9 @@
       .fade-up {
         opacity: 0;
         transform: translateY(32px);
-        transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+        transition:
+          opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+          transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
       }
       .fade-up.visible {
         opacity: 1;
@@ -1237,11 +1258,11 @@
                   d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
               </svg>
             </div>
-            <h4 class="font-display font-bold text-dark">Retail Outlet</h4>
+            <h4 class="font-display font-bold text-dark">Outlet for Retailers</h4>
             <p class="text-2xl font-display font-extrabold text-brand mt-1">
-              500 <span class="text-sm font-medium text-medium">sq ft</span>
+              300 <span class="text-sm font-medium text-medium">sq ft</span>
             </p>
-            <p class="text-sm text-medium mt-2">Customer-facing retail counter for walk-in orders</p>
+            <p class="text-sm text-medium mt-2">Counter for retail walk-in orders</p>
           </div>
 
           <div
@@ -1687,9 +1708,9 @@
             (l) => `
       <div class="group flex-shrink-0 w-40 h-20 bg-white rounded-xl border border-soft-grey flex items-center justify-center px-6 hover:border-brand/20 hover:shadow-md transition-all">
         <img src="${l.src}" alt="${ariaHidden ? '' : l.alt}" class="${
-              l.h
-            } w-auto opacity-80 group-hover:opacity-100 transition-opacity" loading="lazy" decoding="async" />
-      </div>`
+          l.h
+        } w-auto opacity-80 group-hover:opacity-100 transition-opacity" loading="lazy" decoding="async" />
+      </div>`,
           )
           .join('');
       const logoTrack = document.getElementById('logo-track');
@@ -1708,7 +1729,7 @@
             }
           });
         },
-        { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+        { threshold: 0.1, rootMargin: '0px 0px -40px 0px' },
       );
 
       document.querySelectorAll('.fade-up').forEach((el) => observer.observe(el));
@@ -1768,7 +1789,7 @@
             } else {
               showStatus(
                 (data && data.message) || 'Something went wrong. Please try again or call us directly.',
-                false
+                false,
               );
             }
           } catch (err) {
