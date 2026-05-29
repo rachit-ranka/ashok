@@ -312,7 +312,7 @@
       }
     </style>
   </head>
-  <body class="font-sans text-dark antialiased bg-light-grey min-h-screen">
+  <body class="font-sans text-dark antialiased bg-light-grey min-h-screen flex flex-col">
     <!-- Navbar -->
     <nav
       id="navbar"
@@ -408,8 +408,9 @@
       </div>
     </nav>
 
-    <!-- Header -->
-    <section class="pt-24 md:pt-28 pb-6 md:pb-8 bg-white border-b border-soft-grey">
+    <main class="flex-1">
+      <!-- Header -->
+      <section class="pt-24 md:pt-28 pb-6 md:pb-8 bg-white border-b border-soft-grey">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center">
           <p class="text-sm font-semibold text-cyan uppercase tracking-widest mb-2">Product Catalog</p>
@@ -578,7 +579,8 @@
           </button>
         </div>
       </div>
-    </section>
+      </section>
+    </main>
 
     <!-- Footer -->
     <footer class="bg-dark py-8 mt-auto">
@@ -604,8 +606,8 @@
       let allData = [];
       let filteredData = [];
       let currentFilter = 'all';
-      let displayCount = 50;
-      const BATCH_SIZE = 50;
+      let displayCount = 20;
+      const BATCH_SIZE = 20;
 
       document.addEventListener('DOMContentLoaded', () => {
         Papa.parse('assets/Ashok Stock.csv', {
@@ -624,9 +626,8 @@
 
             document.getElementById('total-count').textContent = allData.length.toLocaleString();
             document.getElementById('loading-state').classList.add('hidden');
-            document.getElementById('initial-state').classList.remove('hidden');
-            document.getElementById('results-count').textContent =
-              `${allData.length.toLocaleString()} medicines available`;
+            document.getElementById('initial-state').classList.add('hidden');
+            performSearch('');
           },
         });
       });
@@ -679,12 +680,20 @@
         displayCount = BATCH_SIZE;
 
         if (!query) {
-          resultsGrid.classList.add('hidden');
-          emptyState.classList.add('hidden');
-          initialState.classList.remove('hidden');
-          loadMoreContainer.classList.add('hidden');
-          resultsCount.textContent = `${allData.length.toLocaleString()} medicines available`;
-          showingInfo.textContent = '';
+          filteredData = allData;
+          initialState.classList.add('hidden');
+
+          if (filteredData.length === 0) {
+            resultsGrid.classList.add('hidden');
+            emptyState.classList.remove('hidden');
+            loadMoreContainer.classList.add('hidden');
+            resultsCount.textContent = 'No results found';
+            showingInfo.textContent = '';
+          } else {
+            emptyState.classList.add('hidden');
+            resultsGrid.classList.remove('hidden');
+            renderResults();
+          }
           return;
         }
 
@@ -720,9 +729,10 @@
         const toShow = filteredData.slice(0, displayCount);
         const query = searchInput.value.trim().toLowerCase();
 
-        resultsCount.textContent = `${filteredData.length.toLocaleString()} result${
-          filteredData.length !== 1 ? 's' : ''
-        } found`;
+        const hasQuery = query.length > 0;
+        resultsCount.textContent = hasQuery
+          ? `${filteredData.length.toLocaleString()} result${filteredData.length !== 1 ? 's' : ''} found`
+          : `${filteredData.length.toLocaleString()} medicines available`;
         showingInfo.textContent =
           filteredData.length > displayCount
             ? `Showing ${toShow.length} of ${filteredData.length.toLocaleString()}`
