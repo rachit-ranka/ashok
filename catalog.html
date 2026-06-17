@@ -3,6 +3,14 @@
   lang="en"
   class="scroll-smooth">
   <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-4K9391RJS9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-4K9391RJS9');
+    </script>
     <link
       rel="icon"
       type="image/png"
@@ -41,7 +49,7 @@
           "@type": "Brand",
           "name": "Ashok Traders"
         },
-        "alternateName": "Ashok Traders",
+        "alternateName": "ASTR Healthcare",
         "url": "https://astrhealthcare.in/",
         "logo": "https://astrhealthcare.in/assets/ashok-collatorals/logo-sm.jpg",
         "image": "https://astrhealthcare.in/assets/ashok-collatorals/logo-sm.jpg",
@@ -134,30 +142,6 @@
     </script>
     <!-- End Breadcrumb Schema -->
 
-    <!-- Hidden FAQ content for SEO (not visible to users) -->
-    <div
-      style="display: none"
-      aria-hidden="true">
-      <section>
-        <h2>Frequently Asked Questions</h2>
-        <dl>
-          <dt>How do I search for medicines in the Ashok Traders catalog?</dt>
-          <dd>
-            You can search by medicine name, drug/salt composition, or company using the search bar and filters provided
-            in the catalog.
-          </dd>
-          <dt>What information is available for each medicine?</dt>
-          <dd>Each medicine entry includes the name, salt/composition, company, and MRP.</dd>
-          <dt>How often is the medicine catalog updated?</dt>
-          <dd>The catalog is updated regularly to reflect current inventory and new product additions.</dd>
-          <dt>Can I place an order directly from the catalog?</dt>
-          <dd>
-            You can make an enquiry or place an order by using the contact form or WhatsApp link provided on the
-            website.
-          </dd>
-        </dl>
-      </section>
-    </div>
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -222,9 +206,6 @@
       crossorigin />
     <link
       rel="preconnect"
-      href="https://cdn.tailwindcss.com" />
-    <link
-      rel="preconnect"
       href="https://cdnjs.cloudflare.com" />
     <link
       rel="preload"
@@ -245,32 +226,12 @@
         rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap"
     /></noscript>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="assets/css/tailwind.css" />
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"
       defer></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              brand: '#1F3C88',
-              'brand-hover': '#2E5BFF',
-              cyan: '#00B4D8',
-              pink: '#FF4D8D',
-              dark: '#1F2937',
-              medium: '#6B7280',
-              'light-grey': '#F5F7FA',
-              'soft-grey': '#E5E7EB',
-            },
-            fontFamily: {
-              sans: ['Inter', 'sans-serif'],
-              display: ['Poppins', 'sans-serif'],
-            },
-          },
-        },
-      };
-    </script>
     <style>
       .nav-link {
         position: relative;

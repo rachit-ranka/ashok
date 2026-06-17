@@ -3,6 +3,14 @@
   lang="en"
   class="scroll-smooth">
   <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-4K9391RJS9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-4K9391RJS9');
+    </script>
     <link
       rel="icon"
       type="image/png"
@@ -41,7 +49,7 @@
           "@type": "Brand",
           "name": "Ashok Traders"
         },
-        "alternateName": "Ashok Traders",
+        "alternateName": "ASTR Healthcare",
         "url": "https://astrhealthcare.in/",
         "logo": "https://astrhealthcare.in/assets/ashok-collatorals/logo-sm.jpg",
         "image": "https://astrhealthcare.in/assets/ashok-collatorals/logo-sm.jpg",
@@ -136,41 +144,6 @@
     </script>
     <!-- End Breadcrumb Schema -->
 
-    <!-- Hidden FAQ content for SEO (not visible to users) -->
-    <div
-      style="display: none"
-      aria-hidden="true">
-      <section>
-        <h2>Frequently Asked Questions</h2>
-        <dl>
-          <dt>What services does Ashok Traders provide?</dt>
-          <dd>
-            Ashok Traders offers pharmaceutical distribution, stockist services, hospital supply, cold chain logistics,
-            OTC and generic medicine distribution, warehousing, and C&F operations across Indore and Central India.
-          </dd>
-          <dt>Who can partner with Ashok Traders?</dt>
-          <dd>
-            Pharma manufacturers, generic medicine companies, ayurvedic and surgical companies, OTC brands, and PCD
-            pharma companies can partner with Ashok Traders for distribution and supply.
-          </dd>
-          <dt>What is the coverage area for Ashok Traders?</dt>
-          <dd>
-            Ashok Traders serves Indore, Central India, and businesses across India with a strong retailer and hospital
-            network.
-          </dd>
-          <dt>How can I place an order or make an enquiry?</dt>
-          <dd>
-            You can place an order or make an enquiry via the website contact form, WhatsApp, or by calling the provided
-            phone number.
-          </dd>
-          <dt>Does Ashok Traders offer cold chain logistics?</dt>
-          <dd>
-            Yes, Ashok Traders provides cold chain logistics for temperature-sensitive medicines and healthcare
-            products.
-          </dd>
-        </dl>
-      </section>
-    </div>
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -234,9 +207,6 @@
       href="https://fonts.gstatic.com"
       crossorigin />
     <link
-      rel="preconnect"
-      href="https://cdn.tailwindcss.com" />
-    <link
       rel="preload"
       as="image"
       href="assets/ashok-collatorals/company-logo-opt.jpg"
@@ -259,29 +229,9 @@
         rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap"
     /></noscript>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              brand: '#1F3C88',
-              'brand-hover': '#2E5BFF',
-              cyan: '#00B4D8',
-              pink: '#FF4D8D',
-              dark: '#1F2937',
-              medium: '#6B7280',
-              'light-grey': '#F5F7FA',
-              'soft-grey': '#E5E7EB',
-            },
-            fontFamily: {
-              sans: ['Inter', 'sans-serif'],
-              display: ['Poppins', 'sans-serif'],
-            },
-          },
-        },
-      };
-    </script>
+    <link
+      rel="stylesheet"
+      href="assets/css/tailwind.css" />
     <style>
       .fade-up {
         opacity: 0;
@@ -1643,6 +1593,60 @@
             <p class="mt-1">Indore, Madhya Pradesh, India</p>
           </div>
         </div>
+
+        <!-- Services / SEO landing pages: spread link equity from the homepage -->
+        <nav
+          aria-label="Our services"
+          class="mt-10 pt-8 border-t border-white/10">
+          <p class="text-xs font-semibold uppercase tracking-widest text-white/40 mb-3">Our Services</p>
+          <div class="flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/50">
+            <a
+              href="pharma-distributor-indore.html"
+              class="hover:text-white transition-colors"
+              >Pharma Distributor in Indore</a
+            >
+            <a
+              href="pharma-stockist-indore.html"
+              class="hover:text-white transition-colors"
+              >Pharma Stockist in Indore</a
+            >
+            <a
+              href="medicine-wholesaler-indore.html"
+              class="hover:text-white transition-colors"
+              >Medicine Wholesaler in Indore</a
+            >
+            <a
+              href="hospital-medicine-supplier.html"
+              class="hover:text-white transition-colors"
+              >Hospital Medicine Supplier</a
+            >
+            <a
+              href="generic-medicine-distributor.html"
+              class="hover:text-white transition-colors"
+              >Generic Medicine Distributor</a
+            >
+            <a
+              href="cold-chain-pharma-logistics.html"
+              class="hover:text-white transition-colors"
+              >Cold Chain Pharma Logistics</a
+            >
+            <a
+              href="super-stockist-services.html"
+              class="hover:text-white transition-colors"
+              >Super Stockist Services</a
+            >
+            <a
+              href="pharma-distribution-partner.html"
+              class="hover:text-white transition-colors"
+              >Pharma Distribution Partner</a
+            >
+            <a
+              href="pharmaceutical-distributor-central-india.html"
+              class="hover:text-white transition-colors"
+              >Pharma Distributor Central India</a
+            >
+          </div>
+        </nav>
       </div>
     </footer>
 

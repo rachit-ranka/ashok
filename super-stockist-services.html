@@ -3,6 +3,14 @@
   lang="en"
   class="scroll-smooth">
   <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-4K9391RJS9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-4K9391RJS9');
+    </script>
     <link
       rel="icon"
       type="image/png"
@@ -77,7 +85,7 @@
         "@type": ["Organization", "LocalBusiness"],
         "name": "Ashok Traders",
         "brand": { "@type": "Brand", "name": "Ashok Traders" },
-        "alternateName": "Ashok Traders",
+        "alternateName": "ASTR Healthcare",
         "url": "https://astrhealthcare.in/",
         "logo": "https://astrhealthcare.in/assets/ashok-collatorals/logo-sm.jpg",
         "image": "https://astrhealthcare.in/assets/ashok-collatorals/logo-sm.jpg",
@@ -181,9 +189,6 @@
       href="https://fonts.gstatic.com"
       crossorigin />
     <link
-      rel="preconnect"
-      href="https://cdn.tailwindcss.com" />
-    <link
       rel="preload"
       as="style"
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap"
@@ -196,29 +201,9 @@
         rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap"
     /></noscript>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              brand: '#1F3C88',
-              'brand-hover': '#2E5BFF',
-              cyan: '#00B4D8',
-              pink: '#FF4D8D',
-              dark: '#1F2937',
-              medium: '#6B7280',
-              'light-grey': '#F5F7FA',
-              'soft-grey': '#E5E7EB',
-            },
-            fontFamily: {
-              sans: ['Inter', 'sans-serif'],
-              display: ['Poppins', 'sans-serif'],
-            },
-          },
-        },
-      };
-    </script>
+    <link
+      rel="stylesheet"
+      href="assets/css/tailwind.css" />
     <style>
       .nav-link {
         position: relative;
@@ -426,33 +411,6 @@
               >
             </li>
           </ul>
-        </div>
-        <!-- Hidden FAQ content for SEO (not visible to users) -->
-        <div
-          style="display: none"
-          aria-hidden="true">
-          <section>
-            <h2>Frequently Asked Questions</h2>
-            <dl>
-              <dt>What are super stockist services?</dt>
-              <dd>
-                Super stockist services involve large-scale distribution, warehousing, and supply chain management for
-                pharma manufacturers and brands.
-              </dd>
-              <dt>Why choose Ashok Traders as your super stockist?</dt>
-              <dd>
-                We offer trusted distribution, warehousing, and logistics solutions with a strong network in Indore and
-                Central India.
-              </dd>
-              <dt>Who can partner with Ashok Traders?</dt>
-              <dd>
-                Pharma manufacturers, healthcare brands, and institutions can partner with us for super stockist
-                services.
-              </dd>
-              <dt>How can I get in touch?</dt>
-              <dd>Contact us via our website, WhatsApp, or phone for super stockist partnership enquiries.</dd>
-            </dl>
-          </section>
         </div>
       </section>
     </main>
