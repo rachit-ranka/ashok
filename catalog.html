@@ -210,7 +210,7 @@
     <link
       rel="preload"
       as="fetch"
-      href="assets/Ashok stock.csv"
+      href="assets/catalog.json"
       crossorigin />
 
     <link
@@ -229,9 +229,6 @@
     <link
       rel="stylesheet"
       href="assets/css/tailwind.css" />
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"
-      defer></script>
     <style>
       .nav-link {
         position: relative;
@@ -571,26 +568,20 @@
       const BATCH_SIZE = 20;
 
       document.addEventListener('DOMContentLoaded', () => {
-        Papa.parse('assets/Ashok stock.csv', {
-          download: true,
-          header: true,
-          skipEmptyLines: true,
-          complete: function (results) {
-            allData = results.data
-              .filter((row) => row['Product Name'] && row['Product Name'].trim())
-              .map((row) => ({
-                name: (row['Product Name'] || '').trim(),
-                salt: (row['Salt Composition'] || '').trim(),
-                mrp: (row['M.R.P.'] || '').trim(),
-                company: (row['Company'] || '').trim(),
-              }));
-
+        fetch('assets/catalog.json')
+          .then((r) => r.json())
+          .then((rows) => {
+            allData = rows.map((r) => ({
+              name: r[0],
+              salt: r[1],
+              mrp: r[2],
+              company: r[3],
+            }));
             document.getElementById('total-count').textContent = allData.length.toLocaleString();
             document.getElementById('loading-state').classList.add('hidden');
             document.getElementById('initial-state').classList.add('hidden');
             performSearch('');
-          },
-        });
+          });
       });
 
       const searchInput = document.getElementById('search-input');
