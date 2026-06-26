@@ -210,7 +210,7 @@
     <link
       rel="preload"
       as="fetch"
-      href="assets/Ashok Stock.csv"
+      href="assets/Ashok stock.csv"
       crossorigin />
 
     <link
@@ -571,18 +571,18 @@
       const BATCH_SIZE = 20;
 
       document.addEventListener('DOMContentLoaded', () => {
-        Papa.parse('assets/Ashok Stock.csv', {
+        Papa.parse('assets/Ashok stock.csv', {
           download: true,
           header: true,
           skipEmptyLines: true,
           complete: function (results) {
             allData = results.data
-              .filter((row) => row.name && row.name.trim())
+              .filter((row) => row['Product Name'] && row['Product Name'].trim())
               .map((row) => ({
-                name: (row.name || '').trim(),
-                salt: (row.Salt || '').trim(),
-                mrp: (row.mrp || '').trim(),
-                company: (row.company || '').trim(),
+                name: (row['Product Name'] || '').trim(),
+                salt: (row['Salt Composition'] || '').trim(),
+                mrp: (row['M.R.P.'] || '').trim(),
+                company: (row['Company'] || '').trim(),
               }));
 
             document.getElementById('total-count').textContent = allData.length.toLocaleString();
