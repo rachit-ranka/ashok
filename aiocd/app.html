@@ -1,15 +1,12 @@
 <!DOCTYPE html>
 <!-- ============================================================
-     AIOCD CONVERTER — FROZEN BASELINE v1.1 (DO NOT EDIT)
-     Verified suppliers:
-       - Alkem Laboratories  (PDF, GSTIN 23AABCA9521E1Z5)
-           multi-page, GST slabs w/ interleaved subtotals, free goods
-       - GlaxoSmithKline (GSK) (XLS export, GSTIN 23AAACG4414B1ZG)
-           box->strip conversion (factor from pack, e.g. 100X1ML->100),
-           value-discount -> billed/free split, free-goods rows,
-           full strip-rate precision (no over-rounding)
-     Taxable reconciles to each source invoice.
-     Snapshot only. Do new work in aiocd-converter.html and re-freeze.
+     AIOCD CONVERTER — WORKING COPY (build on this file)
+     Baseline frozen as aiocd-converter-STABLE-v1.1-Alkem-GSK.html
+     Verified suppliers (auto line-item extraction):
+       - Alkem Laboratories  (PDF,  GSTIN 23AABCA9521E1Z5)
+       - GlaxoSmithKline GSK (XLS,  GSTIN 23AAACG4414B1ZG)
+     To add a new supplier: tune extraction, verify taxable reconciles to the
+     invoice, then add its GSTIN to the SUPPORTED map, and re-freeze.
      ============================================================ -->
 <html lang="en">
 <head>
@@ -93,14 +90,23 @@
   <!-- STEP 1: INPUT -->
   <div class="card">
     <h2><span class="step">1</span> Upload the invoice</h2>
-    <div class="drop" id="drop" style="padding:26px;font-size:14px">Drag &amp; drop the <b>invoice PDF</b> or a <b>GSK XLS export</b> here, or <label style="display:inline;text-transform:none;color:var(--accent);cursor:pointer;font-weight:600"><input type="file" id="pdffile" accept=".pdf,.xls,.xlsx,.csv,.txt,application/pdf" style="display:none">click to choose a file</label></div>
+    <div class="drop" id="drop" style="padding:26px;font-size:14px">Drag &amp; drop an <b>invoice PDF</b>, a <b>GSK XLS export</b>, or <b>any CSV / XLS</b> here, or <label style="display:inline;text-transform:none;color:var(--accent);cursor:pointer;font-weight:600"><input type="file" id="pdffile" accept=".pdf,.xls,.xlsx,.csv,.txt,application/pdf" style="display:none">click to choose a file</label></div>
     <div class="banner" id="parseMsg"></div>
-    <p class="hint">Verified auto-extraction: <b>Alkem</b> (PDF) and <b>GSK</b> (XLS export). Other suppliers still get invoice details auto-filled — enter their line items in the grid by hand.</p>
+    <p class="hint">Verified auto-extraction: <b>Alkem</b> (PDF) and <b>GSK</b> (XLS). Any other <b>CSV/XLS</b> uses the universal column mapper below. Unknown PDFs still get invoice details auto-filled for manual entry.</p>
     <details>
       <summary>Advanced: paste raw text / view PDF text</summary>
       <textarea id="rawtext" style="margin-top:8px" placeholder="Extracted PDF text appears here. You can also paste bill text and press Parse."></textarea>
       <div class="btnrow"><button class="ghost sm" id="parseBtn">Parse pasted text</button></div>
     </details>
+  </div>
+
+  <!-- UNIVERSAL CSV COLUMN MAPPING (shown only for unrecognized CSV/XLS) -->
+  <div class="card" id="mapCard" style="display:none">
+    <h2><span class="step" style="background:var(--accent2)"><i>≈</i></span> Map the columns</h2>
+    <p class="hint" style="margin-top:0">Auto-detected from your file. Fix any that are wrong — especially which price is <b>PTS/Rate</b> — then import. The mapping is remembered for next time.</p>
+    <div id="mapBody"></div>
+    <div class="btnrow"><button class="primary" id="applyMapBtn">Import with this mapping ↓</button></div>
+    <div class="banner" id="mapMsg"></div>
   </div>
 
   <!-- STEP 2: INVOICE HEADER -->
@@ -886,6 +892,91 @@ function decodeFileText(buf){
 }
 
 /* ============================================================
+   UNIVERSAL CSV / XLS IMPORTER — for ANY tabular export that isn't a
+   dedicated supplier (Alkem/GSK). Auto-detects delimiter + header + columns,
+   the user confirms the mapping, and it's saved for next time.
+   ============================================================ */
+const MAP_FIELDS = [['','— ignore —'],['name','Product name'],['hsn','HSN'],['batch','Batch'],
+  ['expiry','Expiry'],['mrp','MRP'],['ptr','PTR'],['pts','PTS / Rate'],['qty','Qty'],
+  ['free','Free qty'],['disc','Discount %'],['gst','GST %'],['taxable','Taxable / Amount (check)']];
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function csvNum(v){ const m=String(v==null?'':v).replace(/[₹,]/g,'').match(/-?\d+(?:\.\d+)?/); return m?m[0]:''; }
+
+function detectDelimiter(text){
+  const line=(text.split(/\r?\n/).find(l=>l.trim()!=='')||'');
+  const cands=['\t',',',';','|'];
+  return cands.map(d=>[d,line.split(d).length]).sort((a,b)=>b[1]-a[1])[0][0];
+}
+function parseDelimited(text, delim){
+  const rows=[]; let row=[], cell='', q=false;
+  for(let i=0;i<text.length;i++){
+    const ch=text[i];
+    if(q){ if(ch==='"'){ if(text[i+1]==='"'){cell+='"';i++;} else q=false; } else cell+=ch; }
+    else if(ch==='"') q=true;
+    else if(ch===delim){ row.push(cell); cell=''; }
+    else if(ch==='\n'){ row.push(cell); rows.push(row); row=[]; cell=''; }
+    else if(ch!=='\r') cell+=ch;
+  }
+  if(cell!=='' || row.length){ row.push(cell); rows.push(row); }
+  return rows.filter(r=> r.some(c=> String(c).trim()!==''));
+}
+// Header row = the row (in the first ~15) whose cells map to the most fields.
+function findHeaderRowIdx(rows){
+  let bi=0, bs=-1;
+  for(let i=0;i<Math.min(rows.length,15);i++){
+    const s=rows[i].reduce((a,c)=> a+(labelToField(c)?1:0),0);
+    if(s>bs){ bs=s; bi=i; }
+  }
+  return bs>=2 ? bi : 0;
+}
+// Guess the aiocd grid field for a column header.
+function csvFieldGuess(header){
+  const s=String(header||'').toLowerCase();
+  if(/\bdisc/.test(s) && !/value|amt|amount/.test(s)) return 'disc';
+  const f=labelToField(header);
+  const M={name:'name',hsn:'hsn',batch:'batch',expiry:'expiry',mrp:'mrp',ptr:'ptr',pts:'pts',rate:'pts',
+    qty:'qty',qtytotal:'qty',free:'free',cgst:'gst',sgst:'gst',igst:'gst',gstpct:'gst',
+    taxable:'taxable',amount:'taxable',pack:'',mfgdate:'',mfgcode:''};
+  return (f && M[f]!=null) ? M[f] : '';
+}
+// Build grid items from headers + data rows + a per-column mapping (array of fields).
+function buildItemsFromMapping(headers, dataRows, mapping){
+  const gstCols = mapping.map((m,i)=> m==='gst'?i:-1).filter(i=>i>=0);
+  const idxOf = f => mapping.indexOf(f);
+  const items=[]; let recOk=0, recTotal=0;
+  dataRows.forEach(r=>{
+    const val = f => { const i=idxOf(f); return i>=0 ? String(r[i]==null?'':r[i]).trim() : ''; };
+    const pts = csvNum(val('pts'));
+    let gstV=0, gp=false;
+    gstCols.forEach(i=>{ const rr=gstRateFrom(r[i]); if(rr!=null){ gstV+=rr; gp=true; } });
+    let gst = gp ? String(gstV) : '5';
+    if(!parseFloat(gst) || parseFloat(gst)>28) gst='5';
+    const disc = csvNum(val('disc')) || '0';
+    const taxable = csvNum(val('taxable'));
+    let qty = csvNum(val('qty'));
+    if(!qty && taxable && parseFloat(pts)>0) qty = String(Math.round(parseFloat(taxable)/parseFloat(pts)));
+    const hsn = (val('hsn').match(/\d{4,}/)||[''])[0] || csvNum(val('hsn'));
+    const it = { name:val('name'), pack:'', hsn, batch:val('batch').split(/\s+/)[0]||'',
+      expiry:val('expiry'), mrp:csvNum(val('mrp')), ptr:csvNum(val('ptr')), pts,
+      qty, free:csvNum(val('free'))||'0', disc, gst };
+    if(taxable && parseFloat(pts)>0){
+      recTotal++;
+      const gross=(parseFloat(qty)||0)*parseFloat(pts);
+      const net=gross*(1-(parseFloat(disc)||0)/100);
+      const tol=Math.max(1, parseFloat(taxable)*0.005);
+      if(Math.abs(gross-parseFloat(taxable))<=tol || Math.abs(net-parseFloat(taxable))<=tol) recOk++;
+    }
+    if(it.name || it.hsn || it.pts) items.push(it);
+  });
+  return {items, recOk, recTotal};
+}
+// Saved column mappings, keyed by a header fingerprint, in localStorage.
+const CMAP_KEY='aiocd_csv_maps';
+function loadCsvMaps(){ try{return JSON.parse(localStorage.getItem(CMAP_KEY)||'{}');}catch(e){return {};} }
+function saveCsvMap(fp,m){ const all=loadCsvMaps(); all[fp]=m; try{localStorage.setItem(CMAP_KEY,JSON.stringify(all));}catch(e){} }
+function csvFingerprint(headers){ return headers.map(h=>String(h).trim().toLowerCase()).join('|'); }
+
+/* ============================================================
    INVOICE METADATA + SUPPLIER PROFILES (standardization layer)
    ============================================================ */
 function parseDateToISO(s){
@@ -1012,10 +1103,10 @@ async function handleDataFile(file){
     const sup = DATA_SUPPLIERS[sellerG];
     const ps = document.getElementById('profStatus');
     if(!sup){
-      addRow();
-      banner(msg,'warn','This data file isn\'t a recognised supplier export. Recognised exports: '+Object.values(DATA_SUPPLIERS).map(s=>s.name).join(', ')+'. (A real binary .xls/.xlsx needs the PDF path instead.)');
+      universalCsv(text, buyer);   // not a dedicated supplier -> universal column mapper
       return;
     }
+    document.getElementById('mapCard').style.display='none';  // dedicated supplier: no mapping panel
     const {items, meta} = sup.parse(text);
     SELLER_GSTIN = meta.seller || sellerG;
     if(meta.invNo && !val('invNo')) document.getElementById('invNo').value=meta.invNo;
@@ -1038,11 +1129,65 @@ async function handleDataFile(file){
   }catch(e){ banner(msg,'err','Data file read failed: '+e.message); }
 }
 
+/* ---- Universal CSV/XLS mapping mode ---- */
+let CSV_STATE=null;
+function universalCsv(text, buyer){
+  const msg=document.getElementById('parseMsg');
+  const rows=parseDelimited(text, detectDelimiter(text));
+  if(rows.length<2){ addRow(); banner(msg,'warn','Could not read tabular rows from this file.'); return; }
+  const hi=findHeaderRowIdx(rows);
+  const headers=rows[hi].map(h=>String(h).trim());
+  const dataRows=rows.slice(hi+1).filter(r=> r.some(c=>String(c).trim()!==''));
+  CSV_STATE={headers, dataRows};
+  const meta=detectMeta(text, buyer);
+  if(meta.invNo && !val('invNo')) document.getElementById('invNo').value=meta.invNo;
+  const iso=parseDateToISO(meta.date); if(iso) document.getElementById('invDate').value=iso;
+  if(meta.place && !val('place')) document.getElementById('place').value=meta.place;
+  if(meta.seller){ SELLER_GSTIN=meta.seller;
+    document.getElementById('gstType').value=(meta.seller.slice(0,2)!==buyer.slice(0,2))?'CENTRAL':'LOCAL'; }
+  const saved=loadCsvMaps()[csvFingerprint(headers)];
+  renderMapping(headers, dataRows[0]||[], saved);
+  document.getElementById('mapCard').style.display='';
+  document.getElementById('mapMsg').className='banner';
+  banner(msg,'ok','Detected '+headers.length+' columns and '+dataRows.length+' data row(s)'+(saved?' — your saved mapping was applied':'')+'. Check the mapping below, then Import.');
+  document.getElementById('mapCard').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function renderMapping(headers, sample, saved){
+  const opts=sel=>MAP_FIELDS.map(([v,l])=>'<option value="'+v+'"'+(v===sel?' selected':'')+'>'+l+'</option>').join('');
+  let html='<div class="tablewrap"><table style="min-width:520px"><thead><tr><th>Column in file</th><th>Sample value</th><th>Maps to</th></tr></thead><tbody>';
+  headers.forEach((h,i)=>{
+    const key=String(h).toLowerCase();
+    const guess=(saved && saved[key]!=null)? saved[key] : csvFieldGuess(h);
+    html+='<tr><td style="font-weight:600">'+esc(h||'(blank)')+'</td><td style="color:var(--muted)">'+esc(String(sample[i]||'').slice(0,26))+'</td>'+
+      '<td><select data-col="'+i+'" class="mapsel" style="min-width:150px">'+opts(guess)+'</select></td></tr>';
+  });
+  document.getElementById('mapBody').innerHTML=html+'</tbody></table></div>';
+}
+document.getElementById('applyMapBtn').onclick=()=>{
+  if(!CSV_STATE) return;
+  const mm=document.getElementById('mapMsg');
+  const sels=[...document.querySelectorAll('#mapBody .mapsel')];
+  const mapping=CSV_STATE.headers.map((h,i)=>{ const s=sels.find(x=>+x.dataset.col===i); return s?s.value:''; });
+  const byName={}; CSV_STATE.headers.forEach((h,i)=> byName[String(h).toLowerCase()]=mapping[i]);
+  saveCsvMap(csvFingerprint(CSV_STATE.headers), byName);
+  const {items,recOk,recTotal}=buildItemsFromMapping(CSV_STATE.headers, CSV_STATE.dataRows, mapping);
+  gridBody.innerHTML='';
+  if(!items.length){ addRow(); banner(mm,'warn','No items built — map a Product name and a PTS/Rate column, then Import again.'); return; }
+  items.forEach(addRow); recalc();
+  let m='Imported '+items.length+' item(s).', type='ok';
+  if(recTotal){
+    m+=' Reconciliation: '+recOk+' of '+recTotal+' rows match the Taxable/Amount column';
+    if(recOk<recTotal){ type='warn'; m+=' — recheck which column is PTS/Rate (and any discount).'; } else m+=' ✓';
+  } else { m+=' Tip: map a Taxable/Amount column to enable the accuracy check.'; }
+  banner(mm,type,m);
+};
+
 function routeFile(f){
   if(!f) return;
+  document.getElementById('mapCard').style.display='none';
   const nm=(f.name||'').toLowerCase();
   if(f.type==='application/pdf' || nm.endsWith('.pdf')) handlePdf(f);
-  else handleDataFile(f);   // .xls / .xlsx / .csv / .txt / tab-separated exports
+  else handleDataFile(f);   // GSK export -> dedicated; any other CSV/XLS -> universal mapper
 }
 document.getElementById('pdffile').onchange = e=>routeFile(e.target.files[0]);
 const drop = document.getElementById('drop');
