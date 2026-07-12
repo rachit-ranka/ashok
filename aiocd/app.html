@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<!-- ============================================================
+     AIOCD CONVERTER — FROZEN BASELINE v1.1 (DO NOT EDIT)
+     Verified suppliers:
+       - Alkem Laboratories  (PDF, GSTIN 23AABCA9521E1Z5)
+           multi-page, GST slabs w/ interleaved subtotals, free goods
+       - GlaxoSmithKline (GSK) (XLS export, GSTIN 23AAACG4414B1ZG)
+           box->strip conversion (factor from pack, e.g. 100X1ML->100),
+           value-discount -> billed/free split, free-goods rows,
+           full strip-rate precision (no over-rounding)
+     Taxable reconciles to each source invoice.
+     Snapshot only. Do new work in aiocd-converter.html and re-freeze.
+     ============================================================ -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bill → AIOCD Purchase Import Converter</title>
+<style>
+  :root{
+    --bg:#0f1419; --panel:#1a2029; --panel2:#232b36; --line:#313b48;
+    --text:#e6edf3; --muted:#8b98a5; --accent:#4c9be8; --accent2:#2d7d46;
+    --warn:#e3b341; --danger:#e5534b; --field:#0d1117;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);color:var(--text);font-size:14px;line-height:1.45}
+  header{padding:18px 22px;border-bottom:1px solid var(--line);background:var(--panel)}
+  header h1{margin:0;font-size:18px;font-weight:650}
+  header p{margin:4px 0 0;color:var(--muted);font-size:12.5px}
+  .wrap{max-width:1180px;margin:0 auto;padding:20px 22px 60px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin-bottom:18px}
+  .card h2{margin:0 0 12px;font-size:14px;font-weight:650;letter-spacing:.02em;color:var(--text);
+    display:flex;align-items:center;gap:8px}
+  .step{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;
+    background:var(--accent);color:#fff;font-size:12px;font-weight:700;flex:none}
+  label{display:block;font-size:11.5px;color:var(--muted);margin-bottom:4px;font-weight:600;text-transform:uppercase;letter-spacing:.03em}
+  input,select,textarea{width:100%;background:var(--field);border:1px solid var(--line);border-radius:6px;
+    color:var(--text);padding:8px 9px;font-size:13px;font-family:inherit}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
+  textarea{resize:vertical;min-height:120px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px}
+  .grid-head{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .grid-head .full{grid-column:1/-1}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  button{cursor:pointer;border:1px solid var(--line);background:var(--panel2);color:var(--text);
+    border-radius:6px;padding:8px 14px;font-size:13px;font-weight:600;font-family:inherit}
+  button:hover{border-color:var(--accent)}
+  button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  button.primary:hover{filter:brightness(1.08)}
+  button.green{background:var(--accent2);border-color:var(--accent2);color:#fff}
+  button.ghost{background:transparent}
+  button.sm{padding:4px 9px;font-size:12px}
+  .btnrow{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+  .hint{color:var(--muted);font-size:12px;margin:6px 0 0}
+  .tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px;margin-top:4px}
+  table{border-collapse:collapse;width:100%;min-width:1050px}
+  th{background:var(--panel2);color:var(--muted);font-size:10.5px;text-transform:uppercase;letter-spacing:.03em;
+    padding:7px 6px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap;font-weight:700}
+  td{padding:3px 5px;border-bottom:1px solid var(--line)}
+  td input{padding:5px 6px;font-size:12px;border-color:transparent;background:transparent}
+  td input:focus{background:var(--field);border-color:var(--accent)}
+  td.num input{text-align:right}
+  th.num{text-align:right}
+  .delcol{width:34px}
+  .del{color:var(--danger);background:transparent;border:none;font-size:16px;line-height:1;padding:2px 6px}
+  .totbar{display:flex;gap:22px;flex-wrap:wrap;margin-top:14px;padding:12px 14px;background:var(--panel2);
+    border-radius:8px;font-size:13px}
+  .totbar b{color:var(--text)} .totbar span{color:var(--muted)}
+  .tot-val{font-family:ui-monospace,monospace;font-weight:700;color:var(--accent)}
+  .banner{border-radius:8px;padding:10px 13px;font-size:12.5px;margin-top:12px;display:none}
+  .banner.show{display:block}
+  .banner.ok{background:rgba(45,125,70,.16);border:1px solid var(--accent2);color:#9be0ab}
+  .banner.warn{background:rgba(227,179,65,.13);border:1px solid var(--warn);color:#f0d27a}
+  .banner.err{background:rgba(229,83,75,.13);border:1px solid var(--danger);color:#f0a29c}
+  code{background:var(--field);padding:1px 5px;border-radius:4px;font-size:12px}
+  .mono{font-family:ui-monospace,monospace}
+  .drop{border:1.5px dashed var(--line);border-radius:8px;padding:14px;text-align:center;color:var(--muted);
+    font-size:12.5px;margin-top:10px;transition:.15s}
+  .drop.dragover{border-color:var(--accent);color:var(--text);background:rgba(76,155,232,.07)}
+  details{margin-top:10px} summary{cursor:pointer;color:var(--muted);font-size:12px}
+  pre.preview{background:var(--field);border:1px solid var(--line);border-radius:6px;padding:10px;
+    overflow:auto;max-height:220px;font-size:11px;margin-top:8px}
+</style>
+</head>
+<body>
+<header>
+  <h1>Invoice → AIOCD Purchase Import Converter</h1>
+  <p>Drop an invoice PDF, verify the line items, and download an ERP-ready aiocd CSV for Marg. Auto line-item extraction is verified for Alkem; other suppliers auto-fill invoice details for manual entry. Item code is left blank so Marg matches by product name.</p>
+</header>
+
+<div class="wrap">
+
+  <!-- STEP 1: INPUT -->
+  <div class="card">
+    <h2><span class="step">1</span> Upload the invoice</h2>
+    <div class="drop" id="drop" style="padding:26px;font-size:14px">Drag &amp; drop the <b>invoice PDF</b> or a <b>GSK XLS export</b> here, or <label style="display:inline;text-transform:none;color:var(--accent);cursor:pointer;font-weight:600"><input type="file" id="pdffile" accept=".pdf,.xls,.xlsx,.csv,.txt,application/pdf" style="display:none">click to choose a file</label></div>
+    <div class="banner" id="parseMsg"></div>
+    <p class="hint">Verified auto-extraction: <b>Alkem</b> (PDF) and <b>GSK</b> (XLS export). Other suppliers still get invoice details auto-filled — enter their line items in the grid by hand.</p>
+    <details>
+      <summary>Advanced: paste raw text / view PDF text</summary>
+      <textarea id="rawtext" style="margin-top:8px" placeholder="Extracted PDF text appears here. You can also paste bill text and press Parse."></textarea>
+      <div class="btnrow"><button class="ghost sm" id="parseBtn">Parse pasted text</button></div>
+    </details>
+  </div>
+
+  <!-- STEP 2: INVOICE HEADER -->
+  <div class="card">
+    <h2><span class="step">2</span> Invoice &amp; supplier details</h2>
+    <div class="grid-head">
+      <div><label>Invoice No</label><input id="invNo" placeholder="014/26/S/1073"></div>
+      <div><label>Invoice Date</label><input type="date" id="invDate"></div>
+      <div><label>Entry / Received Date</label><input type="date" id="entryDate"></div>
+      <div><label>GST Type</label><select id="gstType"><option>LOCAL</option><option>CENTRAL</option></select></div>
+      <div><label>Company / Manufacturer</label><input id="company" placeholder="ARRIENT HEALTHCARE PRIVATE LIMITED"></div>
+      <div><label>Supplier Short Code</label><input id="supCode" placeholder="SNF"></div>
+      <div><label>Place / City</label><input id="place" placeholder="INDORE"></div>
+      <div><label>Party Code</label><input id="party" placeholder="695"></div>
+      <div><label>Net Rounding</label><select id="rounding"><option value="none">As-is (keep paise)</option><option value="whole">Nearest whole ₹</option></select></div>
+      <div><label>Your (Buyer) GSTIN</label><input id="buyerGstin" placeholder="23AAZFA9766E1ZW"></div>
+      <div style="grid-column:1/-1;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <button class="ghost sm" id="saveProfileBtn">💾 Save supplier profile</button>
+        <span id="profStatus" class="hint" style="margin:0"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3: GRID -->
+  <div class="card">
+    <h2><span class="step">3</span> Verify line items</h2>
+    <div class="tablewrap">
+      <table id="grid">
+        <thead><tr>
+          <th>Product</th><th>Pack</th><th>HSN</th><th>Batch</th><th>Expiry</th>
+          <th class="num">MRP</th><th class="num">PTR</th><th class="num">PTS</th>
+          <th class="num">Qty</th><th class="num">Free</th><th class="num">Disc%</th><th class="num">GST%</th><th class="delcol"></th>
+        </tr></thead>
+        <tbody id="gridBody"></tbody>
+      </table>
+    </div>
+    <div class="btnrow"><button class="ghost sm" id="addRow">+ Add row</button><button class="ghost sm" id="clearRows">Clear all</button></div>
+    <div class="totbar" id="totbar">
+      <div><span>Taxable</span> <span class="tot-val" id="tTax">0.00</span></div>
+      <div><span>CGST</span> <span class="tot-val" id="tCg">0.00</span></div>
+      <div><span>SGST</span> <span class="tot-val" id="tSg">0.00</span></div>
+      <div><span>Round-off</span> <span class="tot-val" id="tRnd">0.00</span></div>
+      <div><span>Invoice total</span> <span class="tot-val" id="tTot">0.00</span></div>
+    </div>
+  </div>
+
+  <!-- STEP 4: OUTPUT -->
+  <div class="card">
+    <h2><span class="step">4</span> Generate aiocd file</h2>
+    <div class="btnrow">
+      <button class="green" id="genBtn">Generate &amp; download CSV</button>
+      <button class="ghost" id="previewBtn">Preview</button>
+    </div>
+    <div class="banner" id="genMsg"></div>
+    <details id="previewWrap" style="display:none"><summary>Generated file preview</summary><pre class="preview" id="previewOut"></pre></details>
+  </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+if (window['pdfjsLib']) { pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"; }
+
+/* ============================================================
+   AIOCD GENERATOR CORE  (31-field H / T / F, verified spec)
+   ============================================================ */
+const MONTHS = {jan:'01',feb:'02',mar:'03',apr:'04',may:'05',jun:'06',jul:'07',aug:'08',sep:'09',oct:'10',nov:'11',dec:'12'};
+
+// Commercial round-half-up to 2 decimals, corrected for float error (e.g. 202.195 -> 202.20).
+function round2(x){
+  if(isNaN(x)) return 0;
+  return Math.sign(x) * Math.round(Math.abs(x)*100 + 1e-6) / 100;
+}
+function n2(v){ // to fixed-2 numeric string
+  const x = parseFloat(v); return isNaN(x) ? '0.00' : round2(x).toFixed(2);
+}
+// Rate formatter for PTR/PTS/MRP: keep the value's true precision (up to 4 dp, min 2 dp),
+// so box->strip rates like 374.62/100 = 3.7462 are NOT rounded to 3.75.
+function rateFmt(v){
+  let x = parseFloat(v); if(isNaN(x)) x=0;
+  let s = x.toFixed(4).replace(/0+$/,'');   // drop trailing zeros
+  if(s.endsWith('.')) s=s.slice(0,-1);
+  const dot = s.indexOf('.');
+  if(dot<0) s += '.00';                      // no decimals -> add 2
+  else if(s.length-dot-1 === 1) s += '0';    // 1 decimal -> pad to 2
+  return s;
+}
+function toDDMMYYYY(iso){ // 'YYYY-MM-DD' -> 'DDMMYYYY'
+  if(!iso) return '';
+  const m = iso.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  return m ? m[3]+m[2]+m[1] : '';
+}
+// Expiry: accepts 'Apr-29', 'APR 2029', '04/29', '04/2029', '01042029', '2027-07' -> 'DDMMYYYY' (day=01)
+function parseExpiry(s){
+  if(!s) return '';
+  s = String(s).trim();
+  if(/^\d{8}$/.test(s)) return s;                          // already DDMMYYYY
+  let m = s.match(/^([A-Za-z]{3})[^\d]*?(\d{2,4})$/);       // Apr-29 / Apr 2029
+  if(m){ const mm=MONTHS[m[1].toLowerCase()]; let y=m[2]; if(y.length===2)y='20'+y; if(mm)return '01'+mm+y; }
+  m = s.match(/^(\d{1,2})[\/\-\.](\d{2,4})$/);              // 04/29 or 04/2029
+  if(m){ let mm=m[1].padStart(2,'0'); let y=m[2]; if(y.length===2)y='20'+y; return '01'+mm+y; }
+  m = s.match(/^(\d{4})[\/\-](\d{1,2})$/);                  // 2029-04
+  if(m){ return '01'+m[2].padStart(2,'0')+m[1]; }
+  return s; // leave as-is; user can fix
+}
+
+// Build one 31-field T row (array). item = grid row object; H = header object.
+function buildT(item, H){
+  const qty  = parseFloat(item.qty)  || 0;
+  const free = parseFloat(item.free) || 0;
+  const pts  = parseFloat(item.pts)  || 0;
+  const gst  = parseFloat(item.gst)  || 0;
+  const disc = parseFloat(item.disc) || 0;      // trade discount %
+  const half = round2(gst/2);
+  const gross   = round2(qty * pts);
+  const discVal = round2(gross * disc/100);
+  const amount  = round2(gross - discVal);      // taxable = gross - discount
+  const halfAmt = round2(amount * half/100);    // GST is charged on the net taxable
+  const f = new Array(31).fill('');
+  f[0]='T';
+  f[1]=H.supCode||'';
+  f[2]=H.company||'';
+  f[3]='';                       // ERP item code — intentionally blank
+  f[4]='';
+  f[5]=item.name||'';
+  f[6]=item.pack||'';
+  f[7]='';                       // P&C flag (optional)
+  f[8]=item.batch||'';
+  f[9]=parseExpiry(item.expiry);
+  f[10]=rateFmt(item.ptr);
+  f[11]=rateFmt(item.pts);
+  f[12]=rateFmt(item.mrp);
+  f[13]='0';
+  f[14]='';
+  f[15]=String(qty);
+  f[16]=String(free);
+  f[17]='0';
+  f[18]='0';
+  f[19]=disc.toFixed(2);        // discount %
+  f[20]=discVal.toFixed(2);     // discount value
+  f[21]=amount.toFixed(2);
+  f[22]=half.toFixed(2);
+  f[23]=halfAmt.toFixed(2);
+  f[24]='0.00';
+  f[25]='0.00';
+  f[26]=half.toFixed(2);
+  f[27]=halfAmt.toFixed(2);
+  f[28]='0.00';
+  f[29]='0.00';
+  f[30]=(item.hsn||'').trim();
+  return f;
+}
+
+function buildH(H){
+  const f = new Array(31).fill('');
+  const inv = toDDMMYYYY(H.invDate);
+  const ent = toDDMMYYYY(H.entryDate);
+  f[0]='H'; f[1]='1'; f[2]=H.invNo||''; f[3]=inv; f[5]=inv; f[7]='0';
+  f[9]=ent; f[10]=H.gstType||'LOCAL'; f[13]=H.place||''; f[14]=H.party||''; f[15]='0';
+  return f;
+}
+
+function buildF(items, H){
+  let tax=0,cg=0,sg=0;
+  const rows = items.map(it=>buildT(it,H));
+  rows.forEach(r=>{ tax+=parseFloat(r[21])||0; cg+=parseFloat(r[23])||0; sg+=parseFloat(r[27])||0; });
+  tax=round2(tax); cg=round2(cg); sg=round2(sg);
+  const sum = round2(tax+cg+sg);
+  // Net rounding: 'whole' rounds the payable to the nearest rupee (round-off absorbs the paise);
+  // 'none' keeps the exact GST total. Supplier-dependent, so it's a user choice.
+  const total = (H.rounding==='whole') ? Math.round(sum) : sum;
+  const round = +(total - sum).toFixed(2);
+  const f = new Array(31).fill('');
+  f[0]='F'; f[1]=tax.toFixed(2); f[2]='0'; f[3]='0.00'; f[4]=cg.toFixed(2); f[5]='0.00';
+  f[6]=sg.toFixed(2); f[7]='0.00'; f[10]='0.00'; f[12]='0.00'; f[14]='0'; f[16]='0';
+  f[17]='0.00'; f[18]='0'; f[19]='0'; f[20]=round.toFixed(2); f[21]=total.toFixed(2);
+  return {row:f, tax, cg, sg, round, total};
+}
+
+function buildAiocd(items, H){
+  const lines = [];
+  lines.push(buildH(H).join(','));
+  items.forEach(it=> lines.push(buildT(it,H).join(',')));
+  const F = buildF(items,H);
+  lines.push(F.row.join(','));
+  return {text: lines.join('\r\n')+'\r\n', totals:F};
+}
+
+/* ============================================================
+   EDITABLE GRID
+   ============================================================ */
+const COLS = ['name','pack','hsn','batch','expiry','mrp','ptr','pts','qty','free','disc','gst'];
+const NUMCOLS = new Set(['mrp','ptr','pts','qty','free','disc','gst']);
+const gridBody = document.getElementById('gridBody');
+
+function addRow(data){
+  data = data||{};
+  const tr = document.createElement('tr');
+  COLS.forEach(c=>{
+    const td = document.createElement('td');
+    if(NUMCOLS.has(c)) td.className='num';
+    const inp = document.createElement('input');
+    inp.value = data[c]!=null ? data[c] : '';
+    inp.dataset.col = c;
+    if(c==='gst' && (data[c]==null||data[c]==='')) inp.value='5';
+    inp.addEventListener('input', recalc);
+    td.appendChild(inp); tr.appendChild(td);
+  });
+  const tdd = document.createElement('td'); tdd.className='delcol';
+  const del = document.createElement('button'); del.className='del'; del.innerHTML='×';
+  del.title='Remove row';
+  del.onclick = ()=>{ tr.remove(); recalc(); };
+  tdd.appendChild(del); tr.appendChild(tdd);
+  gridBody.appendChild(tr);
+}
+function readGrid(){
+  return [...gridBody.querySelectorAll('tr')].map(tr=>{
+    const o={}; tr.querySelectorAll('input').forEach(i=>o[i.dataset.col]=i.value.trim());
+    return o;
+  }).filter(o=> o.name || o.qty || o.batch); // skip empty rows
+}
+function readHeader(){
+  return {
+    invNo:val('invNo'), invDate:val('invDate'), entryDate:val('entryDate'),
+    gstType:val('gstType'), company:val('company'), supCode:val('supCode'),
+    place:val('place'), party:val('party'), rounding:val('rounding')
+  };
+}
+function val(id){ return document.getElementById(id).value.trim(); }
+
+function recalc(){
+  const items = readGrid(); const H = readHeader();
+  const F = buildF(items,H);
+  document.getElementById('tTax').textContent = F.tax.toFixed(2);
+  document.getElementById('tCg').textContent  = F.cg.toFixed(2);
+  document.getElementById('tSg').textContent  = F.sg.toFixed(2);
+  document.getElementById('tRnd').textContent = F.round.toFixed(2);
+  document.getElementById('tTot').textContent = F.total.toFixed(2);
+}
+
+document.getElementById('addRow').onclick = ()=>addRow();
+document.getElementById('clearRows').onclick = ()=>{ gridBody.innerHTML=''; recalc(); };
+
+/* ============================================================
+   PARSER DISPATCHER  (auto-detect column- vs row-major scramble)
+   ============================================================ */
+function detectLayout(txt){
+  const t = txt.replace(/(\d),(\d)/g,'$1$2');
+  const toks = t.split(/\s+/);
+  let hsn8=0, hsn8Date=0;
+  for(let i=0;i<toks.length;i++){
+    if(/^\d{8}$/.test(toks[i])){ hsn8++;
+      for(let j=i+1;j<=i+3 && j<toks.length;j++){ if(/^\d{1,2}\/\d{2,4}$/.test(toks[j])){ hsn8Date++; break; } }
+    }
+  }
+  // Bill-2 style: 8-digit HSN immediately followed by an expiry date
+  if(hsn8>0 && hsn8Date>=hsn8/2) return 'row';
+  // Bill-3 style: 6-digit pharma HSN + invoice keywords, no batch/expiry
+  if(/\b(30|21|29|33|34|38)\d{4}\b/.test(t) && /(Taxab|Total\s*Value|Rate\b)/i.test(t)) return 'invoice';
+  // Bill-1 style: an "MRP" label followed by a run of prices
+  return 'col';
+}
+function parseBill(txt){
+  const m = detectLayout(txt);
+  if(m==='row') return parseRowMajor(txt);
+  if(m==='invoice') return parseInvoice(txt);
+  return parseColMajor(txt);
+}
+
+/* ============================================================
+   INVOICE-STYLE PARSER  (Sr HSN(6-digit) Name Code Qty Rate ... Taxable GST Total)
+   No batch/expiry/MRP. qty derived from Taxable/Rate; Rate becomes PTS.
+   ============================================================ */
+function parseInvoice(txt){
+  const clean = txt.replace(/(\d),(\d)/g,'$1$2').replace(/\s+/g,' ').trim();
+  const raw = clean.split(' ');
+  const toks=[]; // rejoin decimals split by PDF wrap
+  for(let i=0;i<raw.length;i++){
+    if(/^\d+\.\d$/.test(raw[i]) && i+1<raw.length && /^\d$/.test(raw[i+1])){ toks.push(raw[i]+raw[i+1]); i++; }
+    else toks.push(raw[i]);
+  }
+  const isHsn = t=>/^(\d{6}|\d{8})$/.test(t) && /^(30|21|29|28|33|34|38|39)/.test(t);
+  const price = t=>/^\d+\.\d{2}$/.test(t);            // 2-decimal money value
+  const hsnPos=[]; toks.forEach((t,i)=>{ if(isHsn(t)) hsnPos.push(i); });
+  const items=[];
+  hsnPos.forEach((h,idx)=>{
+    const end = idx+1<hsnPos.length ? hsnPos[idx+1] : toks.length;
+    // name = tokens after HSN up to the material/item code (a 9+ digit number)
+    let p=h+1, nameToks=[];
+    while(p<end && !/^\d{9,}$/.test(toks[p])){ nameToks.push(toks[p]); p++; }
+    const name = nameToks.join(' ').replace(/\s+/g,' ').trim();
+    // money values in the remainder: [rate, value, disc%, disc, taxable, gstRate, gstAmt, total]
+    const nums=[]; for(let q=p;q<end;q++){ if(price(toks[q])) nums.push(parseFloat(toks[q])); }
+    let pts='', qtyOut='', gst='5';
+    if(nums.length>=4){
+      const rate = nums[0];
+      const taxable = nums[nums.length-4];
+      const gstRate = nums[nums.length-3];
+      pts = rate.toFixed(2);
+      if(gstRate>0 && gstRate<=28) gst = String(gstRate);
+      if(rate>0) qtyOut = Math.round(taxable/rate);
+    }
+    items.push({ name, pack:'', hsn:toks[h], batch:'', expiry:'',
+      mrp:'', ptr:'', pts, qty:qtyOut||'', free:'', gst });
+  });
+  return items;
+}
+
+/* ============================================================
+   ROW-MAJOR PARSER  (each item's fields contiguous; wrapped headers)
+   Columns seen: Name .. HSN Batch Exp OldMRP MRP PTR PTS ...qty cols.. Taxable
+   qty is derived from Taxable/PTS so ambiguous middle columns don't matter.
+   ============================================================ */
+function parseRowMajor(txt){
+  const clean = txt.replace(/(\d),(\d)/g,'$1$2').replace(/\s+/g,' ').trim(); // strip thousand separators
+  const raw = clean.split(' ');
+  // Rejoin decimals split across PDF line-wraps: "2376.0" + "1" -> "2376.01"
+  const toks=[];
+  for(let i=0;i<raw.length;i++){
+    if(/^\d+\.\d$/.test(raw[i]) && i+1<raw.length && /^\d$/.test(raw[i+1])){ toks.push(raw[i]+raw[i+1]); i++; }
+    else toks.push(raw[i]);
+  }
+  const isNum = t=>/^\d+(\.\d+)?$/.test(t);
+  const isDate = t=>/^\d{1,2}\/\d{2,4}$/.test(t) || /^\d{1,2}\/\d{1,2}\/\d{2,4}$/.test(t);
+  // HSN = 8-digit token preceded by NON-numeric text (the product name), so 8-digit
+  // batch numbers (preceded by the real HSN) aren't mistaken for HSN codes.
+  const hsnPos=[]; toks.forEach((t,i)=>{ if(/^\d{8}$/.test(t) && i>0 && !isNum(toks[i-1])) hsnPos.push(i); });
+  // for each HSN: scan back over non-numeric tokens to get the product name; stop at a pure number (Sr / prev value)
+  const meta = hsnPos.map(h=>{
+    let s=h-1, nameToks=[];
+    while(s>=0){ const t=toks[s]; if(isNum(t)) break; nameToks.unshift(t); s--; }
+    return {h, srPos:s, name:nameToks.join(' ').replace(/\s+/g,' ').trim()};
+  });
+  const items=[];
+  meta.forEach((m,idx)=>{
+    const h=m.h;
+    const hsn=toks[h];
+    const batch=toks[h+1]||'';
+    let p=h+2, expiry='';
+    if(isDate(toks[p])){ expiry=toks[p]; p++; }
+    const upper = idx+1<meta.length ? meta[idx+1].srPos : toks.length; // stop before next item's Sr
+    const nums=[];
+    for(let q=p; q<upper; q++){ if(isNum(toks[q])) nums.push(parseFloat(toks[q])); else break; }
+    const oldMRP=nums[0], mrp=nums[1], ptr=nums[2], pts=nums[3];
+    const tail=nums.slice(4);
+    const taxable = tail.length ? tail[tail.length-1] : 0;
+    const saleQty = tail.length ? tail[0] : 0;
+    let qty=0, free=0;
+    if(pts>0 && taxable>0) qty=Math.round(taxable/pts);
+    else free=saleQty;
+    items.push({
+      name:m.name, pack:'', hsn, batch,
+      expiry:(expiry||'').replace(/\//g,'/'),
+      mrp: mrp!=null?mrp.toFixed(2):'',
+      ptr: ptr!=null?ptr.toFixed(2):'',
+      pts: pts!=null?pts.toFixed(2):'',
+      qty: qty||'', free: free||'', gst:'5'
+    });
+  });
+  return items;
+}
+
+/* ============================================================
+   COLUMN-MAJOR PARSER  (all values of a column grouped)
+   ============================================================ */
+function parseColMajor(txt){
+  const items = [];
+  // collapse whitespace but keep it splittable
+  const t = txt.replace(/\r/g,' ').replace(/\n/g,' ').replace(/\s+/g,' ').trim();
+
+  // helper: capture the run of tokens after an anchor label, until a stop label
+  function block(anchor, stops){
+    const re = new RegExp(anchor,'i');
+    const m = re.exec(t); if(!m) return '';
+    let rest = t.slice(m.index+m[0].length);
+    let end = rest.length;
+    for(const s of stops){ const sm = new RegExp(s,'i').exec(rest); if(sm && sm.index<end) end=sm.index; }
+    return rest.slice(0,end).trim();
+  }
+
+  // MRP block -> determines N (item count)
+  const mrpBlock = block('MRP', ['Batch','Exp','Qty','P\\.?T\\.?S','Net Rate','Transport']);
+  const mrps = (mrpBlock.match(/\d+\.\d{1,2}/g)||[]);
+  const N = mrps.length;
+
+  const batchBlock = block('Batch\\s*No\\.?', ['Exp','Qty','MRP','Transport','P\\.?T\\.?S']);
+  const batches = batchBlock.split(' ').filter(x=>x && !/^:$/.test(x)).slice(0,N);
+
+  const expBlock = block('Exp\\.?\\s*Dt\\.?', ['Transport','Qty','Q\\.Dis','P\\.?T\\.?S','Net Rate']);
+  const exps = (expBlock.match(/[A-Za-z]{3}[-\/\s]?\d{2,4}/g)||[]).slice(0,N);
+
+  // Qty block (after "Qty" / "Q.Dis.")
+  const qtyBlock = block('Qty', ['P\\.?T\\.?S','Net Rate','Disc','GST','Transport']);
+  let qnums = (qtyBlock.match(/\d+/g)||[]).map(Number);
+  // qtyBlock often holds Qty then Q.Dis interleaved or sequential — take first N as qty
+  const qtys = qnums.slice(0,N);
+
+  // HSN codes: 8-digit numbers anywhere in the header area (before "MRP")
+  const preMrp = t.split(/MRP/i)[0] || t;
+  const hsns = (preMrp.match(/\b\d{8}\b/g)||[]).slice(0,N);
+
+  // Pack tokens: patterns like 1X10, 1X30, 200 ML, 100ML
+  const packs = (preMrp.match(/\d+\s?X\s?\d+(?:\s?[A-Z]+)*|\d+\s?ML|\d+\s?GM/gi)||[]).slice(0,N);
+
+  // Product names: scan whole pre-MRP region by serial number (1..N).
+  // Strip HSN codes, pack tokens and label words so only "<serial> NAME" clusters remain.
+  let region = preMrp
+    .replace(/\b\d{8}\b/g,' ')                        // HSN codes
+    .replace(/\d+\s?X\s?\d+(?:\s?[A-Za-z]+)*/gi,' ')  // packs like 1X10 TAB STRIP
+    .replace(/\d+\s?ML|\d+\s?GM|\d+\s?MG/gi,' ')       // 200 ML / 100ML / 500MG
+    .replace(/\b(Sr\.?|Product|Description|HSN|Pack|MRP|Transport|Batch|Exp\.?Dt\.?|No\.?)\b/gi,' ')
+    .replace(/\s+/g,' ').trim();
+  const names = [];
+  const cnt = N || 0;
+  for(let i=1;i<=cnt;i++){
+    const startRe = new RegExp('(?:^|\\s)'+i+'\\s+');
+    const sm = startRe.exec(region);
+    if(!sm){ names.push(''); continue; }
+    const from = sm.index + sm[0].length;
+    let to = region.length;
+    const nm = new RegExp('(?:^|\\s)'+(i+1)+'\\s+').exec(region.slice(from));
+    if(nm) to = from + nm.index;
+    names.push(region.slice(from,to).trim());
+  }
+
+  // Net Rate values -> use as PTS. "Net Rate" block has per-item net rates.
+  const netBlock = block('Net Rate', ['Amount','Transport']);
+  const nets = (netBlock.match(/\d+\.\d{2}/g)||[]);
+
+  const count = N || Math.max(names.length, batches.length, qtys.length);
+  for(let i=0;i<count;i++){
+    items.push({
+      name: names[i]||'',
+      pack: (packs[i]||'').replace(/\s+/g,' ').trim(),
+      hsn: hsns[i]||'',
+      batch: batches[i]||'',
+      expiry: (exps[i]||'').replace(/\s+/g,'-'),
+      mrp: mrps[i]||'',
+      ptr: '',              // often needs manual/2nd pass; leave for user
+      pts: nets[i]||'',
+      qty: qtys[i]!=null?qtys[i]:'',
+      free:'',
+      gst:'5'
+    });
+  }
+  return items;
+}
+
+/* ============================================================
+   GENERAL PDF TABLE EXTRACTOR
+   Works with any text-based invoice PDF: reads words by position,
+   finds the header row, maps whatever columns exist (in any order)
+   to aiocd fields by matching header names, then reads data rows by
+   column. Not layout-specific — adapts to the header it finds.
+   ============================================================ */
+
+// Map a column header label to an aiocd field. Order matters (specific first).
+function labelToField(label){
+  const s = label.toLowerCase().replace(/[^a-z%]/g,'');
+  const has = (...k)=> k.some(x=> s.includes(x));
+  if(!s) return null;
+  // ignore obvious metadata tokens so header-line scoring isn't polluted
+  if(has('gstin','gstno','panno','dlno','fssai','stateco','cinno','statecode')) return null;
+  if(has('hsn')) return 'hsn';
+  if(has('batch','lotno','bno','lot')) return 'batch';
+  if(has('mfgdate','mfgdt','mfdate','mfgdt')) return 'mfgdate';
+  if(has('exp','expdt','expiry')) return 'expiry';
+  if(has('mrp')) return 'mrp';
+  if(has('ptr')) return 'ptr';
+  if(has('pts')) return 'pts';
+  if(has('billrate','netrate','purchrate','purrate','prate','saleprice')) return 'pts'; // named purchase rate
+  if(has('cgst')) return 'cgst';
+  if(has('sgst')) return 'sgst';
+  if(has('igst')) return 'igst';
+  if(has('gst','tax%','gstrate')) return 'gstpct';
+  if(has('free','scheme','qdis','bonus','replace')) return 'free';
+  if(has('taxable','taxblevalue','taxvalue')) return 'taxable';
+  if(/tot/.test(s) && /qt/.test(s)) return 'qtytotal';        // "Total Qty" (sale + free)
+  if(has('sold','saleqty','billqty')) return 'qty';
+  if(has('qty','quantity','qtty')) return 'qty';
+  if(has('rate','cost')) return 'rate';      // generic rate -> used as pts fallback
+  if(has('amount','value','netamt','basic')) return 'amount';
+  if(has('description','product','particular','item','goods','name','productname')) return 'name';
+  if(has('pack','size')) return 'pack';
+  if(has('mfgcode','mfg','mfr','manuf','marketed')) return 'mfgcode'; // ignored downstream
+  return null;
+}
+
+// Group positioned words [{x,y,text}] into lines (top->bottom), each line's items left->right.
+function linesFromWords(words){
+  words = (words||[]).filter(w=>w.text && w.text.trim()!=='');
+  const YT=4;
+  const sorted = words.slice().sort((a,b)=> b.y - a.y || a.x - b.x);
+  const lines=[];
+  sorted.forEach(w=>{
+    let ln = lines.find(l=> Math.abs(l.y - w.y) <= YT);
+    if(!ln){ ln={y:w.y, items:[]}; lines.push(ln); }
+    ln.items.push({x:w.x, text:w.text.trim()});
+  });
+  lines.forEach(l=> l.items.sort((a,b)=>a.x-b.x));
+  lines.sort((a,b)=> b.y - a.y);
+  return lines;
+}
+
+// Detect the table header on a page and build its columns. Returns {cols, headerBottomY} or null.
+function findHeaderColumns(lines){
+  if(!lines.length) return null;
+  const numTok = t=>/^[₹]?[-+]?[\d,]+(\.\d+)?%?$/.test(t);
+  const lineGaps=[]; for(let i=1;i<lines.length;i++) lineGaps.push(Math.abs(lines[i-1].y-lines[i].y));
+  const lineGap = lineGaps.length? lineGaps.slice().sort((a,b)=>a-b)[Math.floor(lineGaps.length/2)] : 12;
+  // Score header candidates by STRUCTURAL columns only (product/HSN/batch/expiry/pack/MRP/PTR/PTS).
+  // This stops a totals/summary line ("Taxable CGST SGST Total") from being mistaken for the header.
+  const STRUCTURAL = new Set(['hsn','batch','expiry','mrp','ptr','pts','name','pack','mfgdate']);
+  const scoreLine = l => l.items.reduce((s,it)=>{ const f=labelToField(it.text); return s + (f && STRUCTURAL.has(f)?1:0); }, 0);
+  let bestIdx=-1, bestScore=0;
+  lines.forEach((l,i)=>{ const sc=scoreLine(l); if(sc>bestScore){bestScore=sc; bestIdx=i;} });
+  if(bestIdx<0 || bestScore<3) return null;
+  const headerLines=[lines[bestIdx]];
+  for(const d of [-1,1]){
+    const l=lines[bestIdx+d];
+    if(l && Math.abs(l.y-lines[bestIdx].y) <= lineGap*1.8 && scoreLine(l)>=1){
+      const numFrac=l.items.filter(it=>numTok(it.text)).length/l.items.length;
+      if(numFrac<0.4) headerLines.push(l);
+    }
+  }
+  const headerBottomY = Math.min(...headerLines.map(l=>l.y));
+  // cluster header tokens by NEAR-EQUAL x (merge vertically stacked wrapped words)
+  let htoks=[]; headerLines.forEach(l=> l.items.forEach(it=> htoks.push(it)));
+  htoks.sort((a,b)=>a.x-b.x);
+  const XT=11;
+  let cols=[];
+  htoks.forEach(tk=>{
+    const c=cols[cols.length-1];
+    if(c && Math.abs(tk.x-c.center)<=XT){ c.parts.push(tk); c.center=(c.center*c.n+tk.x)/(c.n+1); c.n++; }
+    else cols.push({center:tk.x, n:1, parts:[tk]});
+  });
+  cols.forEach(c=>{ c.label=c.parts.map(p=>p.text).join(' '); c.field=labelToField(c.label); c.left=Math.min(...c.parts.map(p=>p.x)); });
+  cols.forEach((c,i)=>{ if(c.field==null && (i===0 || /^(s\.?no|sr|sno|s|#)$/i.test(c.label.replace(/[^a-z0-9]/gi,'')))) c.field='_sr'; });
+  cols = cols.filter(c=> c.field!=null);
+  if(!cols.length) return null;
+  return {cols, headerBottomY};
+}
+
+// True end of the invoice body (stop scanning). Group subtotals are NOT here — they're skipped.
+const END_RE = /^(net\s*value|net\s*amount|payable|gstn\s*reg|grand\s*total|irn\b|charges|tax\s*collect|adjustment|round\s*off|total\s*qty|remarks|note\b|warranty|authorised|e\.?\s*&|page\s*\d)/i;
+
+// Collect item rows from one page's lines using the given columns.
+// Alkem groups items by GST slab with interleaved "Total / Add CGST X%" subtotals, so we SKIP
+// those (not stop), and read each group's GST rate from its "Add CGST X%" line onto that group's rows.
+function collectRows(lines, cols, headerBottomY){
+  const colOf = x => { let idx=0; for(let i=0;i<cols.length;i++){ if(cols[i].left <= x+3) idx=i; else break; } return idx; };
+  const hsnIdx = cols.findIndex(c=>c.field==='hsn');
+  const srIdx  = cols.findIndex(c=>c.field==='_sr');
+  const hsnLeft = hsnIdx>=0 ? cols[hsnIdx].left : Infinity;
+  const PRICE_FIELDS = ['mrp','ptr','pts','qty','free','taxable','amount','cgst','sgst','igst','gstpct','rate'];
+  const dataLines = lines.filter(l=> l.y < headerBottomY - 1);
+  const rows=[];
+  let groupStart=0;   // rows[groupStart..] are the current GST group awaiting their rate
+  for(const l of dataLines){
+    const lineText = l.items.map(it=>it.text).join(' ').trim();
+    // "Add CGST 9.00% ..." -> total GST = 2x, apply to this group's items
+    const cg = lineText.match(/add\s*cgst[^%\d]*([\d.]+)\s*%/i);
+    if(cg){ const r=String(parseFloat(cg[1])*2); for(let k=groupStart;k<rows.length;k++) rows[k]._gst=r; groupStart=rows.length; continue; }
+    const ig = lineText.match(/add\s*igst[^%\d]*([\d.]+)\s*%/i);
+    if(ig){ const r=String(parseFloat(ig[1])); for(let k=groupStart;k<rows.length;k++) rows[k]._gst=r; groupStart=rows.length; continue; }
+    if(/^(total\b|sub\s*total|add\s*sgst|gross\b|carried|c\/f|b\/f)/i.test(lineText)) continue; // group subtotal / other tax line -> skip, keep scanning
+    if(END_RE.test(lineText)) break;                          // real end of the invoice body
+    const cells = cols.map(()=>[]);
+    l.items.forEach(it=> cells[colOf(it.x)].push(it.text));
+    const cellStr = cells.map(c=>c.join(' ').trim());
+    const hasHsn = hsnIdx>=0 && /\b\d{6,8}\b/.test(cellStr[hsnIdx]||'');
+    const hasSr  = srIdx>=0 && /^\d{1,4}$/.test((cellStr[srIdx]||'').trim());
+    if(hasHsn || hasSr){
+      const row={}; cols.forEach((c,i)=>{ if(c.field && c.field!=='_sr') row[c.field]=cellStr[i]; });
+      row._cells=cellStr; rows.push(row);
+    } else if(rows.length){
+      // wrapped-name continuation only: everything sits left of the HSN column, no price cells
+      const maxX = Math.max(...l.items.map(it=>it.x));
+      const hasPrice = cols.some((c,i)=> PRICE_FIELDS.includes(c.field) && cellStr[i]);
+      if(maxX < hsnLeft && !hasPrice){
+        const prev=rows[rows.length-1];
+        cols.forEach((c,i)=>{ if(cellStr[i] && c.field && c.field!=='_sr'){ prev[c.field]=((prev[c.field]||'')+' '+cellStr[i]).trim(); } });
+      }
+      // else: metadata/footer line -> ignore
+    }
+  }
+  return rows;
+}
+
+// Single-page reconstruct (kept for text tests / back-compat).
+function reconstructTable(words){
+  const lines = linesFromWords(words);
+  const h = findHeaderColumns(lines);
+  if(!h) return {columns:[], rows:[], headerFound:false, lines};
+  return {columns:h.cols, rows:collectRows(lines,h.cols,h.headerBottomY), headerFound:true};
+}
+
+// Multi-page reconstruct: find columns once (from the first page that has a header),
+// then collect item rows from EVERY page — headers repeating or absent on later pages.
+function reconstructPages(pages){
+  const pageLines = pages.map(linesFromWords);
+  let cols=null;
+  for(const lines of pageLines){ const h=findHeaderColumns(lines); if(h){ cols=h.cols; break; } }
+  if(!cols) return {columns:[], rows:[], headerFound:false};
+  let rows=[];
+  for(const lines of pageLines){
+    const h=findHeaderColumns(lines);
+    const hb = h? h.headerBottomY : Infinity;   // below this page's header, or whole page if none
+    rows = rows.concat(collectRows(lines, cols, hb));
+  }
+  return {columns:cols, rows, headerFound:true};
+}
+
+// Extract a GST rate (<=28) from a cell that may hold "amount 9.00%" or "2.50 173.70".
+function gstRateFrom(cell){
+  if(cell==null) return null;
+  const s=String(cell);
+  const pct=s.match(/(\d+(?:\.\d+)?)\s*%/);      // a %-tagged number is the rate
+  if(pct) return parseFloat(pct[1]);
+  const nums=(s.replace(/,/g,'').match(/\d+(?:\.\d+)?/g)||[]).map(parseFloat).filter(n=>n>0 && n<=28);
+  return nums.length ? Math.min(...nums) : null;  // the small number is the rate, not the amount
+}
+// Convert reconstructed rows -> grid item objects
+function itemsFromRows(rows){
+  // first number in the cell; keeps internal spaces intact so "7 7" -> "7", not "77"
+  const num = v => { if(v==null) return ''; const m=String(v).replace(/[₹,]/g,'').match(/-?\d+(?:\.\d+)?/); return m?m[0]:''; };
+  const items=[];
+  rows.forEach(r=>{
+    const pts = num(r.pts) || num(r.rate);      // rate acts as purchase rate when no explicit PTS
+    const taxable = num(r.taxable) || num(r.amount);
+    // Prefer deriving billed qty from Taxable / PTS (robust to messy/duplicate qty columns)
+    let qty = (taxable && parseFloat(pts)>0) ? String(Math.round(parseFloat(taxable)/parseFloat(pts))) : '';
+    if(!qty) qty = num(r.qty);
+    // free goods = explicit free column, else Total Qty - Sale Qty
+    let free = num(r.free);
+    const totQty = num(r.qtytotal);
+    if((!free || free==='0') && totQty && parseFloat(totQty) > parseFloat(qty||0)){
+      free = String(parseFloat(totQty) - parseFloat(qty||0));
+    }
+    // GST%: group rate from "Add CGST X%" subtotal (Alkem) first; then CGST+SGST / IGST / GST% columns; else 5
+    const cg=gstRateFrom(r.cgst), sg=gstRateFrom(r.sgst), ig=gstRateFrom(r.igst), gp=gstRateFrom(r.gstpct||r.gst);
+    let gst;
+    if(r._gst) gst = r._gst;
+    else if(cg!=null||sg!=null) gst = String((cg||0)+(sg||0));
+    else if(ig!=null) gst = String(ig);
+    else if(gp!=null) gst = String(gp);
+    else gst = '5';
+    if(!parseFloat(gst) || parseFloat(gst)>28) gst='5';
+    const it = {
+      name:(r.name||'').replace(/^\s*\d{1,4}\s+/,'').replace(/\s+/g,' ').trim(),
+      pack:(r.pack||'').trim(), hsn:num(r.hsn), batch:(r.batch||'').split(/\s+/)[0]||'',
+      expiry:(r.expiry||'').trim().split(/\s+/)[0]||'',
+      mrp:num(r.mrp), ptr:num(r.ptr), pts,
+      qty, free, gst
+    };
+    if(it.name||it.hsn||it.pts) items.push(it);
+  });
+  return items;
+}
+
+// IO: extract positioned words per page from a PDF, plus a plain-text dump.
+async function pdfToWords(file){
+  const buf = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({data:buf}).promise;
+  const pages=[]; let raw='';
+  for(let p=1;p<=pdf.numPages;p++){
+    const page = await pdf.getPage(p);
+    const content = await page.getTextContent();
+    const pw=[]; const lineMap={};
+    content.items.forEach(it=>{
+      if(!it.str.trim()) return;
+      const x=it.transform[4], y=it.transform[5];      // per-page coords (no cross-page offset)
+      pw.push({x, y, text:it.str.trim()});
+      const yk=Math.round(y); (lineMap[yk]=lineMap[yk]||[]).push({x,s:it.str});
+    });
+    pages.push(pw);
+    Object.keys(lineMap).sort((a,b)=>b-a).forEach(y=>{ raw += lineMap[y].sort((a,b)=>a.x-b.x).map(o=>o.s).join(' ')+'\n'; });
+  }
+  return {pages, raw};
+}
+
+/* ============================================================
+   SUPPLIER ADAPTERS — one ISOLATED extractor per supplier, keyed by seller GSTIN.
+   Adding a supplier = add ONE entry below with its own extract(pages, raw) -> {items, columns}.
+   A new supplier's code CANNOT touch another supplier's path; the only shared code is the
+   stable primitives (linesFromWords / findHeaderColumns / collectRows / itemsFromRows).
+   ============================================================ */
+function extractGeneric(pages /*, raw */){
+  const tbl = reconstructPages(pages);
+  return { items: tbl.headerFound ? itemsFromRows(tbl.rows) : [], columns: tbl.columns||[], headerFound: tbl.headerFound };
+}
+// Alkem — verified against the generic positional pipeline (multi-page, GST slabs, free goods).
+const extractAlkem = extractGeneric;
+
+const SUPPLIERS = {
+  '23AABCA9521E1Z5': { name:'Alkem Laboratories', extract: extractAlkem },
+  // --- Add the next supplier here (its own extractor, isolated) ---
+  // '<MENARINI_SELLER_GSTIN>': { name:'A.Menarini India', extract: extractMenarini },
+};
+
+async function extractItemsFromPdf(file, buyerGstin){
+  const {pages, raw} = await pdfToWords(file);
+  if(!pages.length || pages.every(p=>!p.length)) return {items:[], raw:'', note:'no-text'}; // scanned/image PDF
+  const meta = detectMeta(raw, buyerGstin);
+  const sup  = SUPPLIERS[meta.seller] || null;            // pick the supplier's own adapter
+  const runner = sup ? sup.extract : extractGeneric;      // generic still runs (preview) for unknown suppliers
+  let r; try{ r = runner(pages, raw) || {}; }catch(e){ r = {items:[], columns:[]}; }
+  return { items:r.items||[], columns:r.columns||[], raw, meta, supplierName: sup?sup.name:null,
+           note: (r.items && r.items.length) ? 'ok' : 'no-items' };
+}
+
+/* ============================================================
+   DATA-FILE (XLS / TSV) SUPPLIER PARSERS — keyed by seller GSTIN, isolated per supplier.
+   Some manufacturers (e.g. GSK) send a structured data export alongside the PDF; reading
+   that is far more reliable than the PDF. Each parser(text) -> {items, meta}.
+   ============================================================ */
+function firstNum(v){ if(v==null) return ''; const m=String(v).replace(/[₹,]/g,'').match(/-?\d+(?:\.\d+)?/); return m?m[0]:''; }
+function mmYYtoDDMMYYYY(s){ s=(s||'').trim(); const m=s.match(/^(\d{1,2})[.\/-](\d{2,4})$/); if(m){ let y=m[2]; if(y.length===2)y='20'+y; return '01'+m[1].padStart(2,'0')+y; } return s; }
+// Strips (sellable units) per box, from the pack in the product name: "20X7" -> 20, "1X10G" -> 1,
+// "X10G"/"X1" (no number before X) -> 1. Take the last such pattern in the name.
+function stripsPerBox(desc){
+  const ms=[...String(desc||'').matchAll(/(\d+)\s*[Xx]/g)];
+  if(!ms.length) return 1;
+  const f=parseInt(ms[ms.length-1][1],10);
+  return f>0 ? f : 1;
+}
+
+// GSK India SAP export (UTF-16 tab-separated). Free/scheme rows (Unit Price 0) merge into the paid row.
+function parseGskXls(text){
+  const rows = text.split(/\r?\n/).filter(l=>l.trim()!=='').map(l=>l.split('\t'));
+  if(!rows.length) return {items:[], meta:{}};
+  const header = rows[0].map(h=>h.trim());
+  const idx = nm => header.indexOf(nm);
+  const C = {
+    hsn:idx('Material Number HSN'), desc:idx('Material Description'), batch:idx("Batch No Manufacturer's Name"),
+    exp:idx('Exp Date'), uom:idx('UOM Qty'), price:idx('Unit Price'), prod:idx('Product Value'),
+    discv:idx('Discount Value'), assess:idx('Assessable Value'),
+    cgst:idx('Tax % CGST'), sgst:idx('Tax % SGST'), igst:idx('Tax % IGST'), mrp:idx('Unit MRP'), ptr:idx('Unit PTR'),
+    invNo:idx('Invoice No.'), invDate:idx('Invoice Date'), place:idx('Place of supply'), gstin:idx('GSTIN')
+  };
+  const get = (r,i)=> (i>=0 && i<r.length)? String(r[i]).trim() : '';
+  const items=[];
+  const perStrip = (v,f)=> v!=='' ? rateFmt(parseFloat(v)/f) : '';   // box rate -> strip rate (full precision)
+  for(let ri=1; ri<rows.length; ri++){
+    const r=rows[ri]; const desc=get(r,C.desc); if(!desc) continue;
+    const hsn=(get(r,C.hsn).match(/\b\d{6,8}\b/g)||[]).slice(-1)[0]||'';
+    const batch=(get(r,C.batch).split(/\s+/)[0])||'';
+    const factor=stripsPerBox(desc);                     // box -> strip conversion
+    const qtyBox=parseFloat(firstNum(get(r,C.uom)))||0;
+    const qtyStrips=qtyBox*factor;
+    const price=firstNum(get(r,C.price)), assess=firstNum(get(r,C.assess));
+    const cg=gstRateFrom(get(r,C.cgst)), sg=gstRateFrom(get(r,C.sgst)), ig=gstRateFrom(get(r,C.igst));
+    const gst = (cg||sg)? String((cg||0)+(sg||0)) : (ig?String(ig):'5');
+    // GSK gives the scheme as a VALUE discount (Discount Value col, may carry a trailing '-').
+    // Represent it as FREE GOODS: free = round(qty * disc%), billed = qty - free.
+    const prodV=Math.abs(parseFloat(firstNum(get(r,C.prod)))||0);
+    const discV=Math.abs(parseFloat(firstNum(get(r,C.discv)))||0);
+    const discPct = prodV>0 && discV>0 ? parseFloat(round2(discV/prodV*100)) : 0;
+    const isFree = (parseFloat(price)||0)===0 && (parseFloat(assess)||0)===0 && qtyStrips>0;
+    if(isFree){
+      const prev=[...items].reverse().find(it=> it.hsn===hsn && it.batch===batch);
+      if(prev){ prev.free=String((parseFloat(prev.free)||0)+qtyStrips); continue; }
+    }
+    let billed=qtyStrips, freeQty=0;
+    if(discPct>0){ freeQty=Math.round(qtyStrips*discPct/100); billed=qtyStrips-freeQty; }
+    items.push({ name:desc, pack:(factor>1?factor+' strips/box':''), hsn, batch, expiry:mmYYtoDDMMYYYY(get(r,C.exp)),
+      mrp:perStrip(firstNum(get(r,C.mrp)),factor), ptr:perStrip(firstNum(get(r,C.ptr)),factor), pts:perStrip(price,factor),
+      qty:String(billed), free:String(freeQty), disc:'0', gst });
+  }
+  const meta={ invNo:get(rows[1],C.invNo), date:get(rows[1],C.invDate), place:get(rows[1],C.place), seller:get(rows[1],C.gstin) };
+  return {items, meta};
+}
+
+const DATA_SUPPLIERS = {
+  '23AAACG4414B1ZG': { name:'GlaxoSmithKline (GSK)', parse: parseGskXls }
+};
+
+function decodeFileText(buf){
+  const u8=new Uint8Array(buf);
+  if(u8.length>=2 && u8[0]===0xFF && u8[1]===0xFE) return new TextDecoder('utf-16le').decode(buf);
+  if(u8.length>=2 && u8[0]===0xFE && u8[1]===0xFF) return new TextDecoder('utf-16be').decode(buf);
+  return new TextDecoder('utf-8').decode(buf);
+}
+
+/* ============================================================
+   INVOICE METADATA + SUPPLIER PROFILES (standardization layer)
+   ============================================================ */
+function parseDateToISO(s){
+  if(!s) return '';
+  s=s.trim();
+  let m=s.match(/^(\d{1,2})[-.\/](\d{1,2})[-.\/](\d{2,4})$/);       // 27.06.2026 / 29-06-2026 / 30/06/2026
+  if(m){ let y=m[3]; if(y.length===2)y='20'+y; return y+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0'); }
+  m=s.match(/^(\d{1,2})[-.\/]([A-Za-z]{3})[-.\/](\d{2,4})$/);        // 26-May-2026
+  if(m){ const mm=MONTHS[m[2].toLowerCase()]; let y=m[3]; if(y.length===2)y='20'+y; if(mm) return y+'-'+mm+'-'+m[1].padStart(2,'0'); }
+  return '';
+}
+// Detect seller GSTIN, GST type, invoice no/date, place from the PDF text dump.
+function detectMeta(raw, buyerGstin){
+  const gstins=[...new Set((raw.match(/\b\d{2}[A-Z]{5}\d{4}[A-Z]\d[A-Z\d]{2}\b/g)||[]))];
+  const seller=gstins.find(g=>g!==buyerGstin)||gstins[0]||'';
+  const invM=raw.match(/(?:invoice|bill)\s*no\.?\s*:?\s*([A-Z0-9][A-Z0-9\/\-]{3,})/i);
+  const dateM=raw.match(/date\s*:?\s*([0-9]{1,2}[-.\/][A-Za-z0-9]{2,4}[-.\/][0-9]{2,4})/i);
+  // Intra vs inter state: compare seller & buyer state codes (first 2 digits of GSTIN)
+  let gstType='LOCAL';
+  if(seller && buyerGstin && seller.slice(0,2)!==buyerGstin.slice(0,2)) gstType='CENTRAL';
+  if(/\b(inter\s*state|igst)\b/i.test(raw) && !/intra/i.test(raw)) gstType='CENTRAL';
+  const placeM=raw.match(/\b(INDORE|BHOPAL|MUMBAI|DELHI|AHMEDABAD|PUNE|[A-Z]{4,})\s*[-–]\s*\d{6}/);
+  return {gstins, seller, gstType, invNo:invM?invM[1]:'', date:dateM?dateM[1]:'', place:placeM?placeM[1]:''};
+}
+// Profiles persist in the browser (localStorage), keyed by seller GSTIN.
+const PKEY='aiocd_profiles_v1';
+function loadProfiles(){ try{return JSON.parse(localStorage.getItem(PKEY)||'{}');}catch(e){return {};} }
+function getProfile(g){ return g? loadProfiles()[g] : null; }
+function putProfile(g,data){ if(!g) return; const p=loadProfiles(); p[g]={...(p[g]||{}),...data}; try{localStorage.setItem(PKEY,JSON.stringify(p));}catch(e){} }
+
+/* ============================================================
+   WIRING
+   ============================================================ */
+function banner(el,type,msg){ el.className='banner show '+type; el.textContent=msg; }
+let SELLER_GSTIN='';   // set when a PDF is loaded, used by Save-profile
+// Verified suppliers come from the SUPPLIERS adapter registry (defined in the extractor section).
+const SUPPORTED_NAMES = Object.values(SUPPLIERS).map(s=>s.name).join(', ');
+
+document.getElementById('parseBtn').onclick = ()=>{
+  const txt = document.getElementById('rawtext').value;
+  if(!txt.trim()){ banner(document.getElementById('parseMsg'),'warn','Paste some bill text first, or drop a PDF.'); return; }
+  try{
+    const items = parseBill(txt);
+    gridBody.innerHTML='';
+    if(items.length===0){ banner(document.getElementById('parseMsg'),'warn','Could not detect line items. Add rows manually below.'); addRow(); return; }
+    items.forEach(addRow);
+    recalc();
+    banner(document.getElementById('parseMsg'),'ok','Parsed '+items.length+' line item(s). Please verify every field — especially PTR/PTS — before generating.');
+  }catch(e){ banner(document.getElementById('parseMsg'),'err','Parse error: '+e.message); }
+};
+
+async function handlePdf(file){
+  const msg = document.getElementById('parseMsg');
+  if(!window.pdfjsLib){ banner(msg,'err','PDF engine not loaded (need internet on first open).'); return; }
+  banner(msg,'warn','Reading PDF…');
+  try{
+    const buyer = (val('buyerGstin')||'23AAZFA9766E1ZW').toUpperCase();
+    const res = await extractItemsFromPdf(file, buyer);
+    document.getElementById('rawtext').value = res.raw || '';
+    gridBody.innerHTML='';
+    if(res.note==='no-text'){
+      banner(msg,'err','This PDF has no selectable text — it looks scanned/image-only. Auto-extraction needs a text-based PDF. You can still type the rows into the grid.');
+      addRow(); return;
+    }
+    // --- metadata + supplier profile (works for any supplier) ---
+    const meta = res.meta || detectMeta(res.raw||'', buyer);
+    SELLER_GSTIN = meta.seller;
+    if(meta.invNo && !val('invNo')) document.getElementById('invNo').value=meta.invNo;
+    const iso=parseDateToISO(meta.date); if(iso) document.getElementById('invDate').value=iso;
+    if(meta.place && !val('place')) document.getElementById('place').value=meta.place;
+    document.getElementById('gstType').value=meta.gstType;
+    const prof = getProfile(meta.seller);
+    const ps = document.getElementById('profStatus');
+    if(prof){
+      if(prof.name && !val('company')) document.getElementById('company').value=prof.name;
+      if(prof.supCode) document.getElementById('supCode').value=prof.supCode;
+      if(prof.party) document.getElementById('party').value=prof.party;
+      if(prof.rounding) document.getElementById('rounding').value=prof.rounding;
+      if(prof.gstType) document.getElementById('gstType').value=prof.gstType;
+    }
+
+    // --- line-item extraction is enabled only for verified suppliers (adapter present) ---
+    const supplierName = res.supplierName;
+    if(!supplierName){
+      addRow();
+      ps.textContent = meta.seller
+        ? 'Supplier '+(prof?.name||meta.seller)+' is not yet verified for auto-extraction — invoice details filled, please enter line items manually.'
+        : '';
+      ps.style.color='var(--warn)';
+      banner(msg,'warn','Invoice details read, but automatic line-item extraction is currently verified only for '+SUPPORTED_NAMES+'. Enter the items in the grid manually, or use a supplier that sends an aiocd CSV.');
+      return;
+    }
+    // supported supplier -> auto-fill grid
+    const items = res.items || [];
+    if(items.length){
+      items.forEach(addRow); recalc();
+      ps.textContent='✓ '+supplierName+' invoice recognised'+(prof?' — profile applied':'');
+      ps.style.color='var(--accent2)';
+      banner(msg,'ok','Extracted '+items.length+' item(s) from this '+supplierName+' invoice. Verify every field, then Generate.');
+    } else {
+      addRow();
+      banner(msg,'warn','Recognised '+supplierName+' but found no line items on this page. Check the PDF, or enter rows manually.');
+    }
+  }catch(e){ banner(msg,'err','PDF read failed: '+e.message); }
+}
+document.getElementById('saveProfileBtn').onclick = ()=>{
+  const ps=document.getElementById('profStatus');
+  if(!SELLER_GSTIN){ ps.textContent='Load a supplier PDF first, then Save profile.'; ps.style.color='var(--warn)'; return; }
+  putProfile(SELLER_GSTIN, {name:val('company'), supCode:val('supCode'), party:val('party'), rounding:val('rounding'), gstType:val('gstType')});
+  ps.textContent='✓ Saved profile for '+(val('company')||SELLER_GSTIN)+' — auto-applied next time';
+  ps.style.color='var(--accent2)';
+};
+// Handle a supplier DATA export (XLS/TSV/CSV), e.g. GSK.
+async function handleDataFile(file){
+  const msg = document.getElementById('parseMsg');
+  banner(msg,'warn','Reading data file…');
+  try{
+    const text = decodeFileText(await file.arrayBuffer());
+    document.getElementById('rawtext').value = text.slice(0,6000);
+    gridBody.innerHTML='';
+    const buyer = (val('buyerGstin')||'23AAZFA9766E1ZW').toUpperCase();
+    const gstins = [...new Set((text.match(/\b\d{2}[A-Z]{5}\d{4}[A-Z]\d[A-Z\d]{2}\b/g)||[]))];
+    const sellerG = gstins.find(g=> DATA_SUPPLIERS[g]) || gstins.find(g=>g!==buyer) || '';
+    const sup = DATA_SUPPLIERS[sellerG];
+    const ps = document.getElementById('profStatus');
+    if(!sup){
+      addRow();
+      banner(msg,'warn','This data file isn\'t a recognised supplier export. Recognised exports: '+Object.values(DATA_SUPPLIERS).map(s=>s.name).join(', ')+'. (A real binary .xls/.xlsx needs the PDF path instead.)');
+      return;
+    }
+    const {items, meta} = sup.parse(text);
+    SELLER_GSTIN = meta.seller || sellerG;
+    if(meta.invNo && !val('invNo')) document.getElementById('invNo').value=meta.invNo;
+    const iso=parseDateToISO(meta.date); if(iso) document.getElementById('invDate').value=iso;
+    if(meta.place && !val('place')) document.getElementById('place').value=meta.place;
+    document.getElementById('gstType').value = (SELLER_GSTIN && SELLER_GSTIN.slice(0,2)!==buyer.slice(0,2)) ? 'CENTRAL' : 'LOCAL';
+    const prof = getProfile(SELLER_GSTIN);
+    if(prof){
+      if(prof.name && !val('company')) document.getElementById('company').value=prof.name;
+      if(prof.supCode) document.getElementById('supCode').value=prof.supCode;
+      if(prof.party) document.getElementById('party').value=prof.party;
+      if(prof.rounding) document.getElementById('rounding').value=prof.rounding;
+      if(prof.gstType) document.getElementById('gstType').value=prof.gstType;
+    } else if(!val('company')){ document.getElementById('company').value=sup.name; }
+    if(items.length){
+      items.forEach(addRow); recalc();
+      ps.textContent='✓ '+sup.name+' export recognised'+(prof?' — profile applied':''); ps.style.color='var(--accent2)';
+      banner(msg,'ok','Extracted '+items.length+' item(s) from the '+sup.name+' data export (free stock merged into paid lines). Verify, then Generate.');
+    } else { addRow(); banner(msg,'warn','Recognised '+sup.name+' but found no line items in the file.'); }
+  }catch(e){ banner(msg,'err','Data file read failed: '+e.message); }
+}
+
+function routeFile(f){
+  if(!f) return;
+  const nm=(f.name||'').toLowerCase();
+  if(f.type==='application/pdf' || nm.endsWith('.pdf')) handlePdf(f);
+  else handleDataFile(f);   // .xls / .xlsx / .csv / .txt / tab-separated exports
+}
+document.getElementById('pdffile').onchange = e=>routeFile(e.target.files[0]);
+const drop = document.getElementById('drop');
+['dragover','dragenter'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('dragover');}));
+['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('dragover');}));
+drop.addEventListener('drop',e=>routeFile(e.dataTransfer.files[0]));
+
+function download(filename, text){
+  const blob = new Blob([text],{type:'text/csv'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=filename;
+  document.body.appendChild(a); a.click(); a.remove();
+}
+document.getElementById('genBtn').onclick = ()=>{
+  const items = readGrid(); const H = readHeader();
+  const gm = document.getElementById('genMsg');
+  if(items.length===0){ banner(gm,'warn','No line items to export. Add rows first.'); return; }
+  const {text,totals} = buildAiocd(items,H);
+  const name = (H.invNo? H.invNo.replace(/[\/\\]/g,'_') : 'purchase')+'_aiocd.csv';
+  download(name,text);
+  banner(gm,'ok','Generated '+name+' — '+items.length+' items, invoice total ₹'+totals.total.toFixed(2)+'. Item code left blank for name matching.');
+};
+document.getElementById('previewBtn').onclick = ()=>{
+  const {text} = buildAiocd(readGrid(),readHeader());
+  document.getElementById('previewWrap').style.display='block';
+  document.getElementById('previewWrap').open=true;
+  document.getElementById('previewOut').textContent = text;
+};
+
+// seed one empty row + default dates + remembered buyer GSTIN
+addRow();
+(function(){
+  const t=new Date().toISOString().slice(0,10); document.getElementById('entryDate').value=t;
+  const bg=document.getElementById('buyerGstin');
+  try{ bg.value = localStorage.getItem('aiocd_buyer_gstin') || '23AAZFA9766E1ZW'; }catch(e){ bg.value='23AAZFA9766E1ZW'; }
+  bg.addEventListener('change', ()=>{ try{ localStorage.setItem('aiocd_buyer_gstin', bg.value.trim().toUpperCase()); }catch(e){} });
+})();
+recalc();
+</script>
+</body>
+</html>
