@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order QR Code | Ashok Traders</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/ashok-collatorals/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="../assets/ashok-collatorals/favicon/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../assets/ashok-collatorals/favicon/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.0/build/qrcode.min.js"></script>
+<style>
+  :root{
+    --brand:#1F3C88; --ink:#1F2937; --muted:#6B7280;
+    --bg-soft:#F5F7FA; --line:#E5E7EB;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    color:var(--muted);background:var(--bg-soft);line-height:1.5;-webkit-font-smoothing:antialiased}
+  h1{color:var(--ink);margin:0;font-family:'Poppins',sans-serif;font-weight:700;font-size:22px}
+  p{margin:0}
+  .wrap{max-width:420px;margin:0 auto;padding:40px 18px}
+
+  .qr-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:28px;text-align:center}
+  .qr-card img.logo{width:40px;height:40px;border-radius:9px;object-fit:cover;margin-bottom:12px}
+  .qr-card h1{margin-bottom:4px}
+  .qr-caption{font-size:14px;color:var(--muted);margin-top:4px;margin-bottom:20px}
+  canvas{width:260px!important;height:260px!important;image-rendering:pixelated}
+  .qr-url{margin-top:16px;font-size:13.5px;color:var(--muted);word-break:break-all;user-select:all}
+
+  .actions{display:flex;gap:10px;margin-top:24px}
+  .btn{
+    flex:1;padding:13px;border-radius:10px;font-family:inherit;font-weight:600;font-size:14.5px;
+    cursor:pointer;border:1.5px solid var(--brand);text-decoration:none;text-align:center;
+  }
+  .btn-primary{background:var(--brand);color:#fff}
+  .btn-ghost{background:#fff;color:var(--brand)}
+
+  .note{text-align:center;font-size:13px;color:var(--muted);margin-top:18px}
+
+  @media print{
+    body{background:#fff}
+    .wrap{padding:0;max-width:100%}
+    .qr-card{border:none;box-shadow:none}
+    .actions, .note{display:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="qr-card" id="qrCard">
+    <img class="logo" src="../assets/ashok-collatorals/logo-sm.jpg" alt="Ashok Traders">
+    <h1>Ashok Traders</h1>
+    <p class="qr-caption">Scan to send us your order on WhatsApp</p>
+    <canvas id="qrCanvas" width="600" height="600"></canvas>
+    <p class="qr-url">astrhealthcare.in/order/</p>
+  </div>
+
+  <noscript>
+    <p class="note">Enable JavaScript to generate the QR code, or share this link directly: https://astrhealthcare.in/order/</p>
+  </noscript>
+
+  <div class="actions">
+    <a class="btn btn-ghost" id="downloadBtn" download="ashok-traders-order-qr.png">Download</a>
+    <button class="btn btn-primary" id="printBtn">Print</button>
+  </div>
+
+  <p class="note">This page is for shop/admin use — print this QR code and display it where customers can scan it.</p>
+</div>
+
+<script>
+(function(){
+  var ORDER_URL = 'https://astrhealthcare.in/order/';
+  var canvas = document.getElementById('qrCanvas');
+
+  QRCode.toCanvas(canvas, ORDER_URL, {
+    width: 600,
+    margin: 2,
+    errorCorrectionLevel: 'M',
+    color: { dark: '#1F2937', light: '#FFFFFF' }
+  }, function(err){
+    if (err) {
+      console.error(err);
+      return;
+    }
+    document.getElementById('downloadBtn').href = canvas.toDataURL('image/png');
+    canvas.style.width = '260px';
+    canvas.style.height = '260px';
+  });
+
+  document.getElementById('printBtn').addEventListener('click', function(){
+    window.print();
+  });
+})();
+</script>
+
+</body>
+</html>
