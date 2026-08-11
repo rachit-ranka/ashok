@@ -38,7 +38,7 @@
       content="Ashok Traders (ASTR Healthcare) is a trusted hospital medicine supplier in Indore and Central India, providing hospitals and clinics with a wide range of medicines, injectables, and critical care products." />
     <link
       rel="canonical"
-      href="https://astrhealthcare.in/hospital-medicine-supplier.html" />
+      href="https://astrhealthcare.in/hospital-medicine-supplier" />
     <meta
       name="robots"
       content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
@@ -54,7 +54,7 @@
       content="Ashok Traders (ASTR Healthcare) is a trusted hospital medicine supplier in Indore and Central India, providing hospitals and clinics with a wide range of medicines, injectables, and critical care products." />
     <meta
       property="og:url"
-      content="https://astrhealthcare.in/hospital-medicine-supplier.html" />
+      content="https://astrhealthcare.in/hospital-medicine-supplier" />
     <meta
       property="og:site_name"
       content="Ashok Traders" />
@@ -89,7 +89,7 @@
         "url": "https://astrhealthcare.in/",
         "logo": "https://astrhealthcare.in/assets/ashok-collatorals/logo-sm.jpg",
         "image": "https://astrhealthcare.in/assets/ashok-collatorals/logo-sm.jpg",
-        "description": "Ashok Traders, powered by Ashok Traders, is a trusted pharmaceutical distributor, stockist, wholesaler, and healthcare supply partner serving Indore, Central India, and businesses across India.",
+        "description": "Ashok Traders, powered by ASTR Healthcare, is a trusted pharmaceutical distributor, stockist, wholesaler, and healthcare supply partner serving Indore, Central India, and businesses across India.",
         "address": {
           "@type": "PostalAddress",
           "streetAddress": "LG 54 Dawa Bazar, RNT Marg",
@@ -122,7 +122,7 @@
             "@type": "ListItem",
             "position": 2,
             "name": "Hospital Medicine Supplier",
-            "item": "https://astrhealthcare.in/hospital-medicine-supplier.html"
+            "item": "https://astrhealthcare.in/hospital-medicine-supplier"
           }
         ]
       }
@@ -176,7 +176,7 @@
         "url": "https://astrhealthcare.in/",
         "potentialAction": {
           "@type": "SearchAction",
-          "target": "https://astrhealthcare.in/catalog.html?q={search_term_string}",
+          "target": "https://astrhealthcare.in/catalog?q={search_term_string}",
           "query-input": "required name=search_term_string"
         }
       }
@@ -222,15 +222,54 @@
         width: 100%;
       }
     </style>
+      <style>
+      .fade-up {
+        opacity: 0;
+        transform: translateY(32px);
+        transition:
+          opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+          transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      .fade-up.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .fade-up-delay-1 { transition-delay: 0.1s; }
+      .fade-up-delay-2 { transition-delay: 0.2s; }
+      .fade-up-delay-3 { transition-delay: 0.3s; }
+      .fade-up-delay-4 { transition-delay: 0.4s; }
+      .nav-link { position: relative; }
+      .nav-link::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: #2e5bff;
+        transition: width 0.3s;
+      }
+      .nav-link:hover::after { width: 100%; }
+      .geo-shape {
+        position: absolute;
+        border-radius: 50%;
+        opacity: 0.04;
+        background: #1f3c88;
+      }
+      .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 30px rgba(31, 60, 136, 0.12);
+      }
+      details.faq-item summary::-webkit-details-marker { display: none; }
+      details.faq-item[open] .faq-chevron { transform: rotate(180deg); }
+    </style>
   </head>
   <body class="font-sans text-dark antialiased bg-white min-h-screen">
-    <!-- Navbar (copied from index.html for consistency) -->
     <nav
+      id="navbar"
       class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-soft-grey/60 transition-shadow duration-300">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16 md:h-18">
-        <a
-          href="index.html"
-          class="flex items-center gap-2 group">
+        <a href="/" class="flex items-center gap-2 group">
           <img
             src="assets/ashok-collatorals/logo-sm.jpg"
             alt="Ashok Traders"
@@ -244,188 +283,493 @@
           </div>
         </a>
         <div class="hidden lg:flex items-center gap-8 text-sm font-medium text-medium">
-          <a
-            href="index.html#about"
-            class="nav-link hover:text-brand transition-colors"
-            >About</a
-          >
-          <a
-            href="index.html#brands"
-            class="nav-link hover:text-brand transition-colors"
-            >Brands</a
-          >
-          <a
-            href="index.html#divisions"
-            class="nav-link hover:text-brand transition-colors"
-            >Divisions</a
-          >
-          <a
-            href="index.html#coverage"
-            class="nav-link hover:text-brand transition-colors"
-            >Coverage</a
-          >
-          <a
-            href="index.html#hospitals"
-            class="nav-link hover:text-brand transition-colors"
-            >Hospitals</a
-          >
-          <a
-            href="index.html#partner"
-            class="nav-link hover:text-brand transition-colors"
-            >Partner</a
-          >
-          <a
-            href="index.html#contact"
-            class="nav-link hover:text-brand transition-colors"
-            >Contact</a
-          >
-          <a
-            href="catalog.html"
-            class="nav-link hover:text-brand transition-colors"
-            >Catalog</a
-          >
+          <a href="/#about" class="nav-link hover:text-brand transition-colors">About</a>
+          <a href="/#brands" class="nav-link hover:text-brand transition-colors">Brands</a>
+          <a href="/#divisions" class="nav-link hover:text-brand transition-colors">Divisions</a>
+          <a href="/#coverage" class="nav-link hover:text-brand transition-colors">Coverage</a>
+          <a href="/#hospitals" class="nav-link hover:text-brand transition-colors">Hospitals</a>
+          <a href="/#partner" class="nav-link hover:text-brand transition-colors">Partner</a>
+          <a href="/#contact" class="nav-link hover:text-brand transition-colors">Contact</a>
+          <a href="/catalog" class="nav-link hover:text-brand transition-colors">Catalog</a>
         </div>
         <div class="flex items-center gap-3">
           <a
-            href="catalog.html"
+            href="/catalog"
             class="hidden sm:inline-flex items-center gap-2 px-4 py-2.5 border-2 border-brand text-brand text-sm font-semibold rounded-lg hover:bg-brand hover:text-white transition-colors">
-            <svg
-              class="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
             Catalog
           </a>
           <a
-            href="index.html#contact"
+            href="/#contact"
             class="hidden sm:inline-flex items-center gap-2 px-5 py-2.5 bg-brand text-white text-sm font-semibold rounded-lg hover:bg-brand-hover transition-colors"
             >Place Order</a
           >
+          <button id="mobile-toggle" class="lg:hidden p-2 rounded-lg hover:bg-light-grey transition-colors" aria-label="Menu">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div id="mobile-menu" class="lg:hidden hidden border-t border-soft-grey bg-white">
+        <div class="px-4 py-4 space-y-2">
+          <a href="/#about" class="block px-3 py-2 rounded-lg text-sm font-medium text-medium hover:text-brand hover:bg-light-grey transition-colors">About</a>
+          <a href="/#brands" class="block px-3 py-2 rounded-lg text-sm font-medium text-medium hover:text-brand hover:bg-light-grey transition-colors">Brands</a>
+          <a href="/#divisions" class="block px-3 py-2 rounded-lg text-sm font-medium text-medium hover:text-brand hover:bg-light-grey transition-colors">Divisions</a>
+          <a href="/#coverage" class="block px-3 py-2 rounded-lg text-sm font-medium text-medium hover:text-brand hover:bg-light-grey transition-colors">Coverage</a>
+          <a href="/#hospitals" class="block px-3 py-2 rounded-lg text-sm font-medium text-medium hover:text-brand hover:bg-light-grey transition-colors">Hospitals</a>
+          <a href="/#partner" class="block px-3 py-2 rounded-lg text-sm font-medium text-medium hover:text-brand hover:bg-light-grey transition-colors">Partner</a>
+          <a href="/#contact" class="block px-3 py-2 rounded-lg text-sm font-medium text-medium hover:text-brand hover:bg-light-grey transition-colors">Contact</a>
+          <a href="/catalog" class="block px-3 py-2 rounded-lg text-sm font-semibold text-brand hover:bg-brand/5 transition-colors">Medicine Catalog</a>
+          <a href="/#contact" class="block px-3 py-2.5 mt-2 bg-brand text-white text-sm font-semibold rounded-lg text-center hover:bg-brand-hover transition-colors">Place Order</a>
         </div>
       </div>
     </nav>
-    <main class="pt-24 pb-16">
-      <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="mb-8">
-          <h1 class="font-display text-4xl md:text-5xl font-extrabold text-dark mb-4">Hospital Medicine Supplier</h1>
-          <p class="text-lg text-medium max-w-2xl mb-4">
-            Ashok Traders (Ashok Traders) is a trusted hospital medicine supplier in Indore and Central India, providing
-            hospitals and clinics with a wide range of medicines, injectables, and critical care products since 1969.
-          </p>
-          <ul class="list-disc pl-6 text-medium mb-4">
-            <li>Prescription &amp; generic medicines</li>
-            <li>Injectables &amp; critical care products</li>
-            <li>Hospital &amp; institutional supply</li>
-            <li>Cold chain logistics</li>
-            <li>Warehousing &amp; C&amp;F operations</li>
-          </ul>
-          <a
-            href="index.html#contact"
-            class="inline-block mt-4 px-6 py-3 bg-brand text-white font-semibold rounded-lg hover:bg-brand-hover transition-colors"
-            >Enquire Now</a
-          >
-        </div>
-        <div class="grid md:grid-cols-2 gap-8 mb-12">
-          <div>
-            <h2 class="font-display text-2xl font-bold text-dark mb-2">Why Choose Us?</h2>
-            <ul class="list-disc pl-6 text-medium">
-              <li>50+ years of pharma distribution expertise</li>
-              <li>Strong network with 2000+ hospitals &amp; clinics</li>
-              <li>Large inventory &amp; product availability</li>
-              <li>Fast delivery across Indore &amp; Central India</li>
-              <li>Relationship-driven, technology-enabled operations</li>
-            </ul>
-          </div>
-          <div>
-            <h2 class="font-display text-2xl font-bold text-dark mb-2">Our Customers</h2>
-            <ul class="list-disc pl-6 text-medium">
-              <li>Hospitals &amp; clinics</li>
-              <li>Nursing homes</li>
-              <li>Institutions &amp; other healthcare providers</li>
-            </ul>
-          </div>
-        </div>
-        <div class="mb-12">
-          <h2 class="font-display text-2xl font-bold text-dark mb-2">Partner With Us</h2>
-          <p class="text-medium mb-2">
-            Pharma manufacturers, generic medicine companies, and healthcare brands are invited to partner with ASTR
-            Healthcare for hospital supply in Indore and Central India.
-          </p>
-          <a
-            href="index.html#partner"
-            class="inline-block px-6 py-3 bg-cyan text-white font-semibold rounded-lg hover:bg-brand-hover transition-colors"
-            >Become a Partner</a
-          >
-        </div>
-        <div class="mb-12">
-          <h2 class="font-display text-2xl font-bold text-dark mb-2">Explore More</h2>
-          <ul class="list-disc pl-6 text-medium">
-            <li>
-              <a
-                href="pharma-distributor-indore.html"
-                class="text-brand hover:underline"
-                >Pharma Distributor in Indore</a
-              >
-            </li>
-            <li>
-              <a
-                href="pharma-stockist-indore.html"
-                class="text-brand hover:underline"
-                >Pharma Stockist in Indore</a
-              >
-            </li>
-            <li>
-              <a
-                href="medicine-wholesaler-indore.html"
-                class="text-brand hover:underline"
-                >Medicine Wholesaler in Indore</a
-              >
-            </li>
-            <li>
-              <a
-                href="pharmaceutical-distributor-central-india.html"
-                class="text-brand hover:underline"
-                >Pharmaceutical Distributor Central India</a
-              >
-            </li>
-            <li>
-              <a
-                href="catalog.html"
-                class="text-brand hover:underline"
-                >View Medicine Catalog</a
-              >
-            </li>
-          </ul>
-        </div>
-      </section>
-    </main>
-    <footer class="bg-dark py-8 mt-auto">
+
+    <!-- ==================== HERO ==================== -->
+    <section class="relative overflow-hidden pt-24 md:pt-32 pb-14 md:pb-20 bg-white">
+      <div class="geo-shape w-[500px] h-[500px] -top-40 -right-40"></div>
+      <div class="geo-shape w-[300px] h-[300px] bottom-0 left-10"></div>
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div class="flex items-center gap-3">
-            <img
-              src="assets/ashok-collatorals/logo-sm.jpg"
-              alt="Ashok Traders"
-              width="32"
-              height="32"
-              class="w-8 h-8 rounded-lg object-cover"
-              loading="lazy" />
-            <span class="text-white font-semibold">Ashok Traders</span>
+        <nav aria-label="Breadcrumb" class="fade-up mb-6 text-sm text-medium">
+          <a href="/" class="hover:text-brand transition-colors">Home</a>
+          <span class="mx-2 text-soft-grey">/</span>
+          <span class="text-dark font-medium">Hospital Medicine Supplier</span>
+        </nav>
+        <div
+          class="fade-up inline-flex items-center gap-2 px-3 py-1.5 bg-brand/5 border border-brand/10 rounded-full mb-6">
+          <span class="w-2 h-2 rounded-full bg-cyan animate-pulse"></span>
+          <span class="text-xs font-semibold text-brand tracking-wide uppercase">Since 1969 · Indore, Madhya Pradesh</span>
+        </div>
+        <div class="grid lg:grid-cols-3 gap-10 items-start">
+          <div class="lg:col-span-2">
+            <h1 class="fade-up fade-up-delay-1 font-display text-4xl sm:text-5xl font-extrabold leading-[1.1] tracking-tight text-dark mb-6">
+              Hospital Medicine Supplier
+            </h1>
+            <p class="fade-up fade-up-delay-2 text-lg text-medium leading-relaxed max-w-2xl mb-6">
+              Ashok Traders (ASTR Healthcare) is a trusted hospital medicine supplier in Indore and Central India, providing hospitals and clinics with a wide range of medicines, injectables, and critical care products since 1969.
+            </p>
+            <ul class="fade-up fade-up-delay-3 grid sm:grid-cols-2 gap-x-6 gap-y-3 text-medium mb-8">
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-cyan flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>Prescription &amp; generic medicines</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-cyan flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>Injectables &amp; critical care products</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-cyan flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>Hospital &amp; institutional supply</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-cyan flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>Cold chain logistics</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-cyan flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>Warehousing &amp; C&amp;F operations</span>
+            </li>
+            </ul>
+            <div class="fade-up fade-up-delay-4 flex flex-wrap gap-4">
+              <a
+                href="/#contact"
+                class="inline-flex items-center gap-2 px-7 py-3.5 bg-brand text-white font-semibold rounded-xl hover:bg-brand-hover shadow-lg shadow-brand/20 hover:shadow-brand-hover/50 transition-all">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
+                </svg>
+                Enquire Now
+              </a>
+              <a
+                href="https://wa.me/919584258725"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-2 px-7 py-3.5 border-2 border-brand text-brand font-semibold rounded-xl hover:bg-brand hover:text-white transition-all">
+                WhatsApp Us
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </a>
+            </div>
           </div>
-          <a
-            href="aiocd/index.html"
-            class="text-soft-grey text-sm hover:text-white transition-colors"
-            >Invoice → AIOCD Converter</a
-          >
-          <div class="text-soft-grey text-sm">&copy; 2026 Ashok Traders. All rights reserved.</div>
+          <div class="fade-up fade-up-delay-2 hidden lg:block">
+            <div class="relative rounded-3xl overflow-hidden bg-gradient-to-br from-brand/5 to-cyan/5 border border-soft-grey/60 p-8 shadow-xl shadow-brand/5">
+              <div class="flex items-center gap-3 mb-6">
+                <img src="assets/ashok-collatorals/logo-sm.jpg" alt="Ashok Traders" width="44" height="44" class="w-11 h-11 rounded-xl object-cover" loading="lazy" decoding="async" />
+                <div>
+                  <div class="font-display font-bold text-dark leading-tight">Ashok Traders</div>
+                  <div class="text-xs text-medium">ASTR Healthcare</div>
+                </div>
+              </div>
+              <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                  <span class="text-sm text-medium">Years of Trust</span>
+                  <span class="font-display font-bold text-brand">50+</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span class="text-sm text-medium">Pharma Companies</span>
+                  <span class="font-display font-bold text-brand">50+</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span class="text-sm text-medium">Daily Orders</span>
+                  <span class="font-display font-bold text-brand">500+</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span class="text-sm text-medium">Coverage</span>
+                  <span class="font-display font-bold text-brand">Pan MP</span>
+                </div>
+              </div>
+              <div class="hero-float mt-6 px-3 py-2 bg-white/95 backdrop-blur rounded-lg shadow text-xs font-semibold text-brand inline-flex items-center gap-2">
+                <span class="text-cyan">●</span> Cold Storage Ready
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+    </section>
+
+    <!-- ==================== STATS ==================== -->
+    <section class="relative bg-brand py-10 md:py-14">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-4 text-center text-white">
+          <div class="fade-up stat-card p-4 rounded-xl transition-all duration-500">
+            <div class="text-3xl md:text-4xl font-display font-extrabold">50+</div>
+            <div class="text-sm text-white/70 mt-1 font-medium">Years Legacy</div>
+            <div class="text-xs text-cyan mt-0.5">Since 1969</div>
+          </div>
+          <div class="fade-up fade-up-delay-1 stat-card p-4 rounded-xl transition-all duration-300">
+            <div class="text-3xl md:text-4xl font-display font-extrabold">50+</div>
+            <div class="text-sm text-white/70 mt-1 font-medium">Pharma Companies</div>
+          </div>
+          <div class="fade-up fade-up-delay-2 stat-card p-4 rounded-xl transition-all duration-500">
+            <div class="text-3xl md:text-4xl font-display font-extrabold">500+</div>
+            <div class="text-sm text-white/70 mt-1 font-medium">Orders Daily</div>
+          </div>
+          <div class="fade-up fade-up-delay-3 stat-card p-4 rounded-xl transition-all duration-300">
+            <div class="text-3xl md:text-4xl font-display font-extrabold">Pan</div>
+            <div class="text-sm text-white/70 mt-1 font-medium">Madhya Pradesh</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== WHY CHOOSE US ==================== -->
+    <section class="py-16 md:py-24 bg-light-grey">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center fade-up mb-12">
+          <p class="text-sm font-semibold text-cyan uppercase tracking-widest mb-3">Why Ashok Traders</p>
+          <h2 class="font-display text-3xl md:text-4xl font-extrabold text-dark">
+            Built on <span class="text-brand">Trust &amp; Reliability</span>
+          </h2>
+        </div>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div class="fade-up group p-6 bg-light-grey rounded-2xl border border-soft-grey/50 hover:border-brand/20 hover:shadow-lg hover:shadow-brand/5 transition-all duration-300">
+            <div class="w-12 h-12 rounded-xl bg-brand/10 flex items-center justify-center mb-4 group-hover:bg-brand/15 transition-colors">
+              <svg class="w-6 h-6 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+            </div>
+            <h3 class="font-display font-bold text-lg text-dark">50+ Years Expertise</h3>
+            <p class="text-sm text-medium mt-2">Half a century of pharma distribution experience serving hospitals.</p>
+          </div>
+          <div class="fade-up group p-6 bg-light-grey rounded-2xl border border-soft-grey/50 hover:border-brand/20 hover:shadow-lg hover:shadow-brand/5 transition-all duration-300">
+            <div class="w-12 h-12 rounded-xl bg-brand/10 flex items-center justify-center mb-4 group-hover:bg-brand/15 transition-colors">
+              <svg class="w-6 h-6 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
+              </svg>
+            </div>
+            <h3 class="font-display font-bold text-lg text-dark">2000+ Hospitals &amp; Clinics</h3>
+            <p class="text-sm text-medium mt-2">A strong, trusted network of hospitals and clinics across the region.</p>
+          </div>
+          <div class="fade-up group p-6 bg-light-grey rounded-2xl border border-soft-grey/50 hover:border-brand/20 hover:shadow-lg hover:shadow-brand/5 transition-all duration-300">
+            <div class="w-12 h-12 rounded-xl bg-brand/10 flex items-center justify-center mb-4 group-hover:bg-brand/15 transition-colors">
+              <svg class="w-6 h-6 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+              </svg>
+            </div>
+            <h3 class="font-display font-bold text-lg text-dark">Large Inventory</h3>
+            <p class="text-sm text-medium mt-2">Deep stock of injectables and critical care products, always ready.</p>
+          </div>
+          <div class="fade-up group p-6 bg-light-grey rounded-2xl border border-soft-grey/50 hover:border-brand/20 hover:shadow-lg hover:shadow-brand/5 transition-all duration-300">
+            <div class="w-12 h-12 rounded-xl bg-brand/10 flex items-center justify-center mb-4 group-hover:bg-brand/15 transition-colors">
+              <svg class="w-6 h-6 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0h2M5 21H3m8-14v2m0 4v2m-4-6v2m0 4v2m8-8v2m0 4v2" />
+              </svg>
+            </div>
+            <h3 class="font-display font-bold text-lg text-dark">Fast Delivery</h3>
+            <p class="text-sm text-medium mt-2">Reliable, timely delivery across Indore and Central India.</p>
+          </div>
+          <div class="fade-up group p-6 bg-light-grey rounded-2xl border border-soft-grey/50 hover:border-brand/20 hover:shadow-lg hover:shadow-brand/5 transition-all duration-300">
+            <div class="w-12 h-12 rounded-xl bg-brand/10 flex items-center justify-center mb-4 group-hover:bg-brand/15 transition-colors">
+              <svg class="w-6 h-6 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a4 4 0 00-3-5.196M9 20H4v-2a4 4 0 013-3.87m9-6.13a4 4 0 11-8 0 4 4 0 018 0zm6 3a4 4 0 11-8 0 4 4 0 018 0z" />
+              </svg>
+            </div>
+            <h3 class="font-display font-bold text-lg text-dark">Tech-Enabled Operations</h3>
+            <p class="text-sm text-medium mt-2">Relationship-driven service backed by modern, technology-enabled processes.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== CUSTOMERS ==================== -->
+    <section class="py-16 md:py-24 bg-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center fade-up mb-12">
+          <p class="text-sm font-semibold text-cyan uppercase tracking-widest mb-3">Who We Serve</p>
+          <h2 class="font-display text-3xl md:text-4xl font-extrabold text-dark">Our <span class="text-brand">Customers</span></h2>
+        </div>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div class="fade-up group p-6 bg-light-grey rounded-2xl border border-soft-grey/50 hover:border-brand/20 hover:shadow-lg hover:shadow-brand/5 transition-all duration-300">
+            <div class="w-12 h-12 rounded-xl bg-brand/10 flex items-center justify-center mb-4 group-hover:bg-brand/15 transition-colors">
+              <svg class="w-6 h-6 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+              </svg>
+            </div>
+            <h3 class="font-display font-bold text-lg text-dark">Hospitals &amp; Clinics</h3>
+            <p class="text-sm text-medium mt-2">Dependable medicine and injectable supply for hospitals and clinics.</p>
+          </div>
+          <div class="fade-up group p-6 bg-light-grey rounded-2xl border border-soft-grey/50 hover:border-brand/20 hover:shadow-lg hover:shadow-brand/5 transition-all duration-300">
+            <div class="w-12 h-12 rounded-xl bg-brand/10 flex items-center justify-center mb-4 group-hover:bg-brand/15 transition-colors">
+              <svg class="w-6 h-6 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0h2M5 21H3m8-14v2m0 4v2m-4-6v2m0 4v2m8-8v2m0 4v2" />
+              </svg>
+            </div>
+            <h3 class="font-display font-bold text-lg text-dark">Nursing Homes</h3>
+            <p class="text-sm text-medium mt-2">Consistent medicine sourcing for nursing homes across the region.</p>
+          </div>
+          <div class="fade-up group p-6 bg-light-grey rounded-2xl border border-soft-grey/50 hover:border-brand/20 hover:shadow-lg hover:shadow-brand/5 transition-all duration-300">
+            <div class="w-12 h-12 rounded-xl bg-brand/10 flex items-center justify-center mb-4 group-hover:bg-brand/15 transition-colors">
+              <svg class="w-6 h-6 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a4 4 0 00-3-5.196M9 20H4v-2a4 4 0 013-3.87m9-6.13a4 4 0 11-8 0 4 4 0 018 0zm6 3a4 4 0 11-8 0 4 4 0 018 0z" />
+              </svg>
+            </div>
+            <h3 class="font-display font-bold text-lg text-dark">Institutions</h3>
+            <p class="text-sm text-medium mt-2">Bulk supply for healthcare institutions and other providers.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== PARTNER CTA ==================== -->
+    <section class="relative overflow-hidden py-16 md:py-20 bg-brand">
+      <div class="geo-shape w-[400px] h-[400px] -bottom-32 -right-32" style="background:#ffffff;opacity:0.05;"></div>
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative">
+        <h2 class="fade-up font-display text-3xl md:text-4xl font-extrabold text-white mb-4">Partner With Us</h2>
+        <p class="fade-up fade-up-delay-1 text-white/80 text-lg leading-relaxed mb-8 max-w-2xl mx-auto">
+          Pharma manufacturers, generic medicine companies, and healthcare brands are invited to partner with ASTR Healthcare for hospital supply in Indore and Central India.
+        </p>
+        <a
+          href="/#partner"
+          class="fade-up fade-up-delay-2 inline-flex items-center gap-2 px-7 py-3.5 bg-white text-brand font-semibold rounded-xl hover:bg-cyan hover:text-white shadow-lg transition-all">
+          Become a Partner
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+          </svg>
+        </a>
+      </div>
+    </section>
+
+    <!-- ==================== FAQ ==================== -->
+    <section class="py-16 md:py-24 bg-light-grey">
+      <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center fade-up mb-12">
+          <p class="text-sm font-semibold text-cyan uppercase tracking-widest mb-3">FAQs</p>
+          <h2 class="font-display text-3xl md:text-4xl font-extrabold text-dark">Frequently Asked <span class="text-brand">Questions</span></h2>
+        </div>
+        <div class="space-y-4">
+          <details class="faq-item fade-up group bg-light-grey rounded-2xl border border-soft-grey/50 open:border-brand/20 transition-colors">
+            <summary class="flex items-center justify-between gap-4 p-5 cursor-pointer font-display font-bold text-dark">
+              What is a hospital medicine supplier?
+              <svg class="faq-chevron w-5 h-5 text-brand flex-shrink-0 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </summary>
+            <p class="px-5 pb-5 text-medium text-sm leading-relaxed">A hospital medicine supplier provides hospitals and clinics with medicines, injectables, and critical care products.</p>
+          </details>
+          <details class="faq-item fade-up fade-up-delay-1 group bg-light-grey rounded-2xl border border-soft-grey/50 open:border-brand/20 transition-colors">
+            <summary class="flex items-center justify-between gap-4 p-5 cursor-pointer font-display font-bold text-dark">
+              Why choose Ashok Traders for hospital supply?
+              <svg class="faq-chevron w-5 h-5 text-brand flex-shrink-0 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </summary>
+            <p class="px-5 pb-5 text-medium text-sm leading-relaxed">We offer a wide range of hospital medicines, fast delivery, and trusted service to healthcare institutions in Indore and Central India.</p>
+          </details>
+          <details class="faq-item fade-up group bg-light-grey rounded-2xl border border-soft-grey/50 open:border-brand/20 transition-colors">
+            <summary class="flex items-center justify-between gap-4 p-5 cursor-pointer font-display font-bold text-dark">
+              Who can buy from Ashok Traders?
+              <svg class="faq-chevron w-5 h-5 text-brand flex-shrink-0 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </summary>
+            <p class="px-5 pb-5 text-medium text-sm leading-relaxed">Hospitals, clinics, nursing homes, and healthcare institutions can source medicines from us.</p>
+          </details>
+          <details class="faq-item fade-up fade-up-delay-1 group bg-light-grey rounded-2xl border border-soft-grey/50 open:border-brand/20 transition-colors">
+            <summary class="flex items-center justify-between gap-4 p-5 cursor-pointer font-display font-bold text-dark">
+              How can I place an order?
+              <svg class="faq-chevron w-5 h-5 text-brand flex-shrink-0 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </summary>
+            <p class="px-5 pb-5 text-medium text-sm leading-relaxed">You can place an order or make an enquiry via our website, WhatsApp, or by calling our customer service number.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== EXPLORE MORE ==================== -->
+    <section class="py-16 md:py-24 bg-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center fade-up mb-12">
+          <p class="text-sm font-semibold text-cyan uppercase tracking-widest mb-3">Related Services</p>
+          <h2 class="font-display text-3xl md:text-4xl font-extrabold text-dark">Explore <span class="text-brand">More</span></h2>
+        </div>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <a href="/pharma-distributor-indore" class="group flex items-center justify-between gap-3 p-4 bg-light-grey rounded-xl border border-soft-grey/50 hover:border-brand/20 hover:bg-white hover:shadow-md transition-all">
+              <span class="font-semibold text-dark group-hover:text-brand transition-colors">Pharma Distributor in Indore</span>
+              <svg class="w-4 h-4 text-brand flex-shrink-0 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </a>
+            <a href="/pharma-stockist-indore" class="group flex items-center justify-between gap-3 p-4 bg-light-grey rounded-xl border border-soft-grey/50 hover:border-brand/20 hover:bg-white hover:shadow-md transition-all">
+              <span class="font-semibold text-dark group-hover:text-brand transition-colors">Pharma Stockist in Indore</span>
+              <svg class="w-4 h-4 text-brand flex-shrink-0 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </a>
+            <a href="/medicine-wholesaler-indore" class="group flex items-center justify-between gap-3 p-4 bg-light-grey rounded-xl border border-soft-grey/50 hover:border-brand/20 hover:bg-white hover:shadow-md transition-all">
+              <span class="font-semibold text-dark group-hover:text-brand transition-colors">Medicine Wholesaler in Indore</span>
+              <svg class="w-4 h-4 text-brand flex-shrink-0 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </a>
+            <a href="/pharmaceutical-distributor-central-india" class="group flex items-center justify-between gap-3 p-4 bg-light-grey rounded-xl border border-soft-grey/50 hover:border-brand/20 hover:bg-white hover:shadow-md transition-all">
+              <span class="font-semibold text-dark group-hover:text-brand transition-colors">Pharma Distributor Central India</span>
+              <svg class="w-4 h-4 text-brand flex-shrink-0 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </a>
+            <a href="/catalog" class="group flex items-center justify-between gap-3 p-4 bg-brand/5 rounded-xl border border-brand/20 hover:bg-brand hover:shadow-md transition-all">
+              <span class="font-semibold text-brand group-hover:text-white transition-colors">View Medicine Catalog</span>
+              <svg class="w-4 h-4 text-brand group-hover:text-white flex-shrink-0 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="bg-dark py-12 md:py-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid md:grid-cols-3 gap-8 items-center">
+          <div>
+            <div class="flex items-center gap-3">
+              <img
+                src="assets/ashok-collatorals/logo-sm.jpg"
+                alt="Ashok Traders"
+                width="40"
+                height="40"
+                class="w-10 h-10 rounded-xl object-cover"
+                loading="lazy"
+                decoding="async" />
+              <div>
+                <span class="font-display font-bold text-white text-xl tracking-tight">Ashok Traders</span>
+              </div>
+            </div>
+            <p class="mt-3 text-white/50 text-sm">Powered by <strong class="text-white/70">ASTR Healthcare</strong></p>
+            <p class="text-white/40 text-sm">Trusted since <span class="text-cyan">1969</span></p>
+          </div>
+
+          <div class="flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/50 md:justify-center">
+            <a href="/#about" class="hover:text-white transition-colors">About</a>
+            <a href="/#brands" class="hover:text-white transition-colors">Brands</a>
+            <a href="/#divisions" class="hover:text-white transition-colors">Divisions</a>
+            <a href="/#hospitals" class="hover:text-white transition-colors">Hospitals</a>
+            <a href="/#partner" class="hover:text-white transition-colors">Partner</a>
+            <a href="/catalog" class="hover:text-white transition-colors">Catalog</a>
+            <a href="/aiocd" class="hover:text-white transition-colors">AIOCD Converter</a>
+            <a href="/#contact" class="hover:text-white transition-colors">Contact</a>
+          </div>
+
+          <div class="text-sm text-white/40 md:text-right">
+            <p>&copy; 2026 Ashok Traders. All rights reserved.</p>
+            <p class="mt-1">Indore, Madhya Pradesh, India</p>
+          </div>
+        </div>
+
+        <nav aria-label="Our services" class="mt-10 pt-8 border-t border-white/10">
+          <p class="text-xs font-semibold uppercase tracking-widest text-white/40 mb-3">Our Services</p>
+          <div class="flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/50">
+            <a href="/pharma-distributor-indore" class="hover:text-white transition-colors">Pharma Distributor in Indore</a>
+            <a href="/pharma-stockist-indore" class="hover:text-white transition-colors">Pharma Stockist in Indore</a>
+            <a href="/medicine-wholesaler-indore" class="hover:text-white transition-colors">Medicine Wholesaler in Indore</a>
+            <a href="/hospital-medicine-supplier" class="hover:text-white transition-colors">Hospital Medicine Supplier</a>
+            <a href="/generic-medicine-distributor" class="hover:text-white transition-colors">Generic Medicine Distributor</a>
+            <a href="/cold-chain-pharma-logistics" class="hover:text-white transition-colors">Cold Chain Pharma Logistics</a>
+            <a href="/super-stockist-services" class="hover:text-white transition-colors">Super Stockist Services</a>
+            <a href="/pharma-distribution-partner" class="hover:text-white transition-colors">Pharma Distribution Partner</a>
+            <a href="/pharmaceutical-distributor-central-india" class="hover:text-white transition-colors">Pharma Distributor Central India</a>
+          </div>
+        </nav>
+      </div>
     </footer>
+
+    <div class="fixed bottom-6 right-6 z-50 flex flex-col gap-3">
+      <a
+        href="https://wa.me/919584258725"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="group w-14 h-14 bg-[#25D366] rounded-full flex items-center justify-center shadow-lg shadow-[#25D366]/30 hover:shadow-xl hover:shadow-[#25D366]/40 hover:scale-110 transition-all"
+        aria-label="Chat on WhatsApp">
+        <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+        </svg>
+      </a>
+      <a
+        href="/#contact"
+        class="group w-14 h-14 bg-brand rounded-full flex items-center justify-center shadow-lg shadow-brand/30 hover:shadow-xl hover:shadow-brand/40 hover:scale-110 hover:bg-brand-hover transition-all"
+        aria-label="Place Order">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
+        </svg>
+      </a>
+    </div>
+
+    <script>
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) entry.target.classList.add('visible');
+          });
+        },
+        { threshold: 0.1, rootMargin: '0px 0px -40px 0px' },
+      );
+      document.querySelectorAll('.fade-up').forEach((el) => observer.observe(el));
+
+      const toggle = document.getElementById('mobile-toggle');
+      const menu = document.getElementById('mobile-menu');
+      toggle.addEventListener('click', () => menu.classList.toggle('hidden'));
+      menu.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => menu.classList.add('hidden')));
+
+      const navbar = document.getElementById('navbar');
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 10) navbar.classList.add('shadow-md');
+        else navbar.classList.remove('shadow-md');
+      });
+    </script>
   </body>
 </html>
