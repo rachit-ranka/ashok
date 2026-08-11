@@ -42,6 +42,7 @@
   nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.9);backdrop-filter:blur(12px);
     border-bottom:1px solid rgba(229,231,235,.6)}
   .nav-in{display:flex;align-items:center;justify-content:space-between;height:64px;gap:16px}
+  .nav-left{display:flex;align-items:center;gap:36px}
   .brand{display:flex;align-items:center;gap:10px}
   .brand img{width:36px;height:36px;border-radius:8px;object-fit:cover}
   .brand .word{font-family:'Poppins',sans-serif;font-weight:700;color:var(--brand);font-size:18px;letter-spacing:-0.02em}
@@ -132,14 +133,16 @@
 
 <nav>
   <div class="wrap nav-in">
-    <a class="brand" href="/">
-      <img src="../assets/ashok-collatorals/logo-sm.jpg" alt="Ashok Traders" width="36" height="36">
-      <span class="word">Ashok Traders</span>
-    </a>
-    <div class="nav-links">
-      <a href="/#about">About</a>
-      <a class="active" href="/aiocd">AIOCD Convertor</a>
-      <a href="/catalog">Catalog</a>
+    <div class="nav-left">
+      <a class="brand" href="/">
+        <img src="../assets/ashok-collatorals/logo-sm.jpg" alt="Ashok Traders" width="36" height="36">
+        <span class="word">Ashok Traders</span>
+      </a>
+      <div class="nav-links">
+        <a href="/#about">About</a>
+        <a class="active" href="/aiocd">AIOCD Convertor</a>
+        <a href="/catalog">Catalog</a>
+      </div>
     </div>
     <div class="nav-right">
       <a class="btn btn-primary nav-cta" href="/aiocd/app">Launch tool <span class="arrow">→</span></a>
