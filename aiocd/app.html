@@ -5,8 +5,13 @@
      Verified suppliers (auto line-item extraction):
        - Alkem Laboratories  (PDF,  GSTIN 23AABCA9521E1Z5)
        - GlaxoSmithKline GSK (XLS,  GSTIN 23AAACG4414B1ZG)
+       - Shivom Pharma       (PDF,  GSTIN 23ABDPA0636L1Z5)
      To add a new supplier: tune extraction, verify taxable reconciles to the
      invoice, then add its GSTIN to the SUPPORTED map, and re-freeze.
+     Any other text-based PDF still runs through the generic positional pipeline
+     (extractGeneric) as a best-effort extraction — grid auto-fills but is flagged
+     "unverified" since its columns/header labels haven't been checked against a
+     real invoice from that supplier.
      ============================================================ -->
 <html lang="en">
 <head>
@@ -82,7 +87,7 @@
 <body>
 <header>
   <h1>Invoice → AIOCD Purchase Import Converter</h1>
-  <p>Drop an invoice PDF, verify the line items, and download an ERP-ready aiocd CSV for Marg. Auto line-item extraction is verified for Alkem; other suppliers auto-fill invoice details for manual entry. Item code is left blank so Marg matches by product name.</p>
+  <p>Drop an invoice PDF, verify the line items, and download an ERP-ready aiocd CSV for Marg. Line-item extraction is verified for Alkem and Shivom Pharma; any other text-based PDF still gets a best-effort auto-extraction, flagged for extra review. Item code is left blank so Marg matches by product name.</p>
 </header>
 
 <div class="wrap">
@@ -92,7 +97,7 @@
     <h2><span class="step">1</span> Upload the invoice</h2>
     <div class="drop" id="drop" style="padding:26px;font-size:14px">Drag &amp; drop an <b>invoice PDF</b>, a <b>GSK XLS export</b>, or <b>any CSV / XLS</b> here, or <label style="display:inline;text-transform:none;color:var(--accent);cursor:pointer;font-weight:600"><input type="file" id="pdffile" accept=".pdf,.xls,.xlsx,.csv,.txt,application/pdf" style="display:none">click to choose a file</label></div>
     <div class="banner" id="parseMsg"></div>
-    <p class="hint">Verified auto-extraction: <b>Alkem</b> (PDF) and <b>GSK</b> (XLS). Any other <b>CSV/XLS</b> uses the universal column mapper below. Unknown PDFs still get invoice details auto-filled for manual entry.</p>
+    <p class="hint">Verified auto-extraction: <b>Alkem</b> (PDF), <b>Shivom Pharma</b> (PDF) and <b>GSK</b> (XLS). Any other <b>CSV/XLS</b> uses the universal column mapper below. Any other <b>PDF</b> gets a best-effort table extraction (⚠ unverified — check every field), or falls back to manual entry if no table is detected.</p>
     <details>
       <summary>Advanced: paste raw text / view PDF text</summary>
       <textarea id="rawtext" style="margin-top:8px" placeholder="Extracted PDF text appears here. You can also paste bill text and press Parse."></textarea>
@@ -801,8 +806,68 @@ function extractGeneric(pages /*, raw */){
 // Alkem — verified against the generic positional pipeline (multi-page, GST slabs, free goods).
 const extractAlkem = extractGeneric;
 
+// Shivom Pharma — own column layout: HSN / Particulars / Exp. / Batch / Qty. / Free / M.R.P. / Rate / Disc% / Gst% / Amount.
+// Can't reuse the shared collectRows: its "Particulars" header label sits ~6pt right of the product
+// names printed below it, so the shared colOf's +3 tolerance misassigns names into the HSN column —
+// this adapter uses midpoint column boundaries instead (isolated; doesn't touch the shared primitive).
+// Qty is read straight from its own column rather than derived from Amount/Rate, because this supplier
+// prints genuine fractional quantities (e.g. 6.37 strips). Item Disc% is intentionally left at 0 (matches
+// the printed Disc% column, which is blank per line): the summary-box "Discount" figure on these invoices
+// is a settled credit note (see the "ADJUSTED CDNB..." remark), a bill-level cash adjustment — not a price
+// discount on these goods — so it must NOT be spread across item rows (that would misstate each product's
+// recorded purchase cost/stock valuation in Marg). It's left out of this CSV; net payable may therefore
+// come out higher than the printed invoice when a CN has been adjusted against it — settle that separately.
+function extractShivom(pages, raw){
+  let cols=null, headerBottomY=Infinity;
+  const rows=[];
+  for(const words of pages){
+    const lines = linesFromWords(words);
+    const h = findHeaderColumns(lines);
+    if(h){ cols=h.cols; headerBottomY=h.headerBottomY; }
+    if(!cols) continue;
+    const bounds=[]; for(let i=0;i<cols.length-1;i++) bounds.push((cols[i].left+cols[i+1].left)/2);
+    const colOf = x=>{ let idx=0; for(const b of bounds){ if(x>=b) idx++; else break; } return idx; };
+    const hsnIdx = cols.findIndex(c=>c.field==='hsn');
+    if(hsnIdx<0) continue;
+    const hsnLeft = cols[hsnIdx].left;
+    const PRICE_FIELDS = ['mrp','pts','rate','qty','free','gstpct','amount'];
+    const dataLines = lines.filter(l=> l.y < headerBottomY - 1);
+    for(const l of dataLines){
+      const lineText = l.items.map(it=>it.text).join(' ').trim();
+      if(END_RE.test(lineText)) break;
+      if(/^(total\b|sub\s*total|gross\b)/i.test(lineText)) continue;
+      const cells = cols.map(()=>[]);
+      l.items.forEach(it=> cells[colOf(it.x)].push(it.text));
+      const cellStr = cells.map(c=>c.join(' ').trim());
+      if(/\b\d{6,8}\b/.test(cellStr[hsnIdx]||'')){
+        const row={}; cols.forEach((c,i)=>{ if(c.field) row[c.field]=cellStr[i]; });
+        rows.push(row);
+      } else if(rows.length){
+        const maxX = Math.max(...l.items.map(it=>it.x));
+        const hasPrice = cols.some((c,i)=> PRICE_FIELDS.includes(c.field) && cellStr[i]);
+        if(maxX < hsnLeft && !hasPrice){
+          const prev = rows[rows.length-1];
+          cols.forEach((c,i)=>{ if(cellStr[i] && c.field) prev[c.field]=((prev[c.field]||'')+' '+cellStr[i]).trim(); });
+        }
+      }
+    }
+  }
+  const items=[];
+  rows.forEach(r=>{
+    const pts = firstNum(r.pts) || firstNum(r.rate);
+    const gp = gstRateFrom(r.gstpct);
+    const name = (r.name||'').replace(/^\s*\d{1,4}\s+/,'').replace(/\s+/g,' ').trim();
+    const it = { name, hsn: firstNum(r.hsn), batch:(r.batch||'').split(/\s+/)[0]||'',
+      expiry:(r.expiry||'').trim().split(/\s+/)[0]||'', mrp: firstNum(r.mrp), ptr:'', pts,
+      qty: firstNum(r.qty), free: firstNum(r.free), disc:'0', gst: gp!=null?String(gp):'5' };
+    if(it.name || it.hsn || it.pts) items.push(it);
+  });
+  return { items, columns: cols||[], headerFound: !!cols };
+}
+
 const SUPPLIERS = {
   '23AABCA9521E1Z5': { name:'Alkem Laboratories', extract: extractAlkem },
+  '23ABDPA0636L1Z5': { name:'Shivom Pharma', extract: extractShivom },
   // --- Add the next supplier here (its own extractor, isolated) ---
   // '<MENARINI_SELLER_GSTIN>': { name:'A.Menarini India', extract: extractMenarini },
 };
@@ -1058,27 +1123,34 @@ async function handlePdf(file){
       if(prof.gstType) document.getElementById('gstType').value=prof.gstType;
     }
 
-    // --- line-item extraction is enabled only for verified suppliers (adapter present) ---
+    // --- verified suppliers (adapter present) use their own tuned extractor; any other text-based
+    //     PDF still gets a best-effort auto-extraction from the generic positional pipeline (same one
+    //     Alkem uses) — it's just unverified for that layout, so the grid is flagged for extra review
+    //     instead of being trusted silently like a verified supplier's.
     const supplierName = res.supplierName;
-    if(!supplierName){
-      addRow();
-      ps.textContent = meta.seller
-        ? 'Supplier '+(prof?.name||meta.seller)+' is not yet verified for auto-extraction — invoice details filled, please enter line items manually.'
-        : '';
-      ps.style.color='var(--warn)';
-      banner(msg,'warn','Invoice details read, but automatic line-item extraction is currently verified only for '+SUPPORTED_NAMES+'. Enter the items in the grid manually, or use a supplier that sends an aiocd CSV.');
-      return;
-    }
-    // supported supplier -> auto-fill grid
     const items = res.items || [];
-    if(items.length){
+    if(supplierName){
+      if(items.length){
+        items.forEach(addRow); recalc();
+        ps.textContent='✓ '+supplierName+' invoice recognised'+(prof?' — profile applied':'');
+        ps.style.color='var(--accent2)';
+        banner(msg,'ok','Extracted '+items.length+' item(s) from this '+supplierName+' invoice. Verify every field, then Generate.');
+      } else {
+        addRow();
+        banner(msg,'warn','Recognised '+supplierName+' but found no line items on this page. Check the PDF, or enter rows manually.');
+      }
+    } else if(items.length){
       items.forEach(addRow); recalc();
-      ps.textContent='✓ '+supplierName+' invoice recognised'+(prof?' — profile applied':'');
-      ps.style.color='var(--accent2)';
-      banner(msg,'ok','Extracted '+items.length+' item(s) from this '+supplierName+' invoice. Verify every field, then Generate.');
+      ps.textContent = '⚠ Unverified layout'+(meta.seller?' ('+meta.seller+')':'')+' — '+items.length+' item(s) auto-extracted, double-check every field';
+      ps.style.color='var(--warn)';
+      banner(msg,'warn','Best-effort extraction (this supplier isn\'t verified — only '+SUPPORTED_NAMES+' are): '+items.length+' item(s) found. Column misreads are possible — check PTR/PTS, Qty, Free and GST% on every row before generating.');
     } else {
       addRow();
-      banner(msg,'warn','Recognised '+supplierName+' but found no line items on this page. Check the PDF, or enter rows manually.');
+      ps.textContent = meta.seller
+        ? 'Could not detect a line-item table for supplier '+(prof?.name||meta.seller)+' — invoice details filled, please enter line items manually.'
+        : '';
+      ps.style.color='var(--warn)';
+      banner(msg,'warn','Invoice details read, but no line-item table could be detected on this PDF. Enter the items in the grid manually, or use a supplier that sends an aiocd CSV.');
     }
   }catch(e){ banner(msg,'err','PDF read failed: '+e.message); }
 }
