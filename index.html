@@ -111,7 +111,7 @@
             "name": "How can I place an order or make an enquiry?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "You can place an order or make an enquiry via the website contact form, WhatsApp, or by calling the provided phone number."
+              "text": "You can place an order or make an enquiry via email, WhatsApp, or by calling the provided phone number."
             }
           },
           {
@@ -152,7 +152,7 @@
         "url": "https://astrhealthcare.in/",
         "potentialAction": {
           "@type": "SearchAction",
-          "target": "https://astrhealthcare.in/catalog.html?q={search_term_string}",
+          "target": "https://astrhealthcare.in/catalog?q={search_term_string}",
           "query-input": "required name=search_term_string"
         }
       }
@@ -351,6 +351,7 @@
       id="navbar"
       class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-soft-grey/60 transition-shadow duration-300">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16 md:h-18">
+        <div class="flex items-center gap-8">
         <a
           href="#"
           class="flex items-center gap-2 group">
@@ -374,44 +375,15 @@
             >About</a
           >
           <a
-            href="#brands"
+            href="/aiocd"
             class="nav-link hover:text-brand transition-colors"
-            >Brands</a
+            >AIOCD Convertor</a
           >
-          <a
-            href="#divisions"
-            class="nav-link hover:text-brand transition-colors"
-            >Divisions</a
-          >
-          <a
-            href="#coverage"
-            class="nav-link hover:text-brand transition-colors"
-            >Coverage</a
-          >
-          <a
-            href="#hospitals"
-            class="nav-link hover:text-brand transition-colors"
-            >Hospitals</a
-          >
-          <a
-            href="#partner"
-            class="nav-link hover:text-brand transition-colors"
-            >Partner</a
-          >
-          <a
-            href="#contact"
-            class="nav-link hover:text-brand transition-colors"
-            >Contact</a
-          >
-          <a
-            href="aiocd/index.html"
-            class="nav-link hover:text-brand transition-colors"
-            >Converter</a
-          >
+        </div>
         </div>
         <div class="flex items-center gap-3">
           <a
-            href="catalog.html"
+            href="/catalog"
             class="hidden sm:inline-flex items-center gap-2 px-4 py-2.5 border-2 border-brand text-brand text-sm font-semibold rounded-lg hover:bg-brand hover:text-white transition-colors">
             <svg
               class="w-4 h-4"
@@ -427,7 +399,7 @@
             Catalog
           </a>
           <a
-            href="#contact"
+            href="/order"
             class="hidden sm:inline-flex items-center gap-2 px-5 py-2.5 bg-brand text-white text-sm font-semibold rounded-lg hover:bg-brand-hover transition-colors">
             Place Order
           </a>
@@ -461,47 +433,17 @@
             >About</a
           >
           <a
-            href="#brands"
-            class="block px-3 py-2 rounded-lg text-sm font-medium text-medium hover:text-brand hover:bg-light-grey transition-colors"
-            >Brands</a
-          >
-          <a
-            href="#divisions"
-            class="block px-3 py-2 rounded-lg text-sm font-medium text-medium hover:text-brand hover:bg-light-grey transition-colors"
-            >Divisions</a
-          >
-          <a
-            href="#coverage"
-            class="block px-3 py-2 rounded-lg text-sm font-medium text-medium hover:text-brand hover:bg-light-grey transition-colors"
-            >Coverage</a
-          >
-          <a
-            href="#hospitals"
-            class="block px-3 py-2 rounded-lg text-sm font-medium text-medium hover:text-brand hover:bg-light-grey transition-colors"
-            >Hospitals</a
-          >
-          <a
-            href="#partner"
-            class="block px-3 py-2 rounded-lg text-sm font-medium text-medium hover:text-brand hover:bg-light-grey transition-colors"
-            >Partner</a
-          >
-          <a
-            href="#contact"
-            class="block px-3 py-2 rounded-lg text-sm font-medium text-medium hover:text-brand hover:bg-light-grey transition-colors"
-            >Contact</a
-          >
-          <a
-            href="catalog.html"
+            href="/aiocd"
             class="block px-3 py-2 rounded-lg text-sm font-semibold text-brand hover:bg-brand/5 transition-colors"
-            >Medicine Catalog</a
+            >AIOCD Convertor</a
           >
           <a
-            href="aiocd/index.html"
+            href="/catalog"
             class="block px-3 py-2 rounded-lg text-sm font-semibold text-brand hover:bg-brand/5 transition-colors"
-            >Invoice → AIOCD Converter</a
+            >Catalog</a
           >
           <a
-            href="#contact"
+            href="/order"
             class="block px-3 py-2.5 mt-2 bg-brand text-white text-sm font-semibold rounded-lg text-center hover:bg-brand-hover transition-colors"
             >Place Order</a
           >
@@ -546,7 +488,7 @@
           </div>
           <div class="fade-up fade-up-delay-4 mt-8 flex flex-wrap gap-4">
             <a
-              href="#contact"
+              href="/order"
               class="inline-flex items-center gap-2 px-7 py-3.5 bg-brand text-white font-semibold rounded-xl hover:bg-brand-hover shadow-lg shadow-brand/20 hover:shadow-brand-hover/50 transition-all">
               <svg
                 class="w-5 h-5"
@@ -993,7 +935,7 @@
                 From emergency medicines to bulk supplies, we ensure your pharmacy shelves are never empty.
               </p>
               <a
-                href="#contact"
+                href="/order"
                 class="inline-flex items-center gap-2 mt-8 px-7 py-3.5 bg-white text-brand font-bold rounded-xl hover:shadow-xl hover:shadow-white/20 transition-all">
                 <svg
                   class="w-5 h-5"
@@ -1214,10 +1156,8 @@
               </svg>
             </div>
             <h4 class="font-display font-bold text-dark">Outlet for Retailers</h4>
-            <p class="text-2xl font-display font-extrabold text-brand mt-1">
-              300 <span class="text-sm font-medium text-medium">sq ft</span>
-            </p>
-            <p class="text-sm text-medium mt-2">Counter for retail walk-in orders</p>
+            <p class="text-sm text-brand font-semibold mt-1">Walk-in Counter</p>
+            <p class="text-sm text-medium mt-2">Dedicated counter for retail walk-in orders</p>
           </div>
 
           <div
@@ -1236,10 +1176,8 @@
               </svg>
             </div>
             <h4 class="font-display font-bold text-dark">Warehouse</h4>
-            <p class="text-2xl font-display font-extrabold text-brand mt-1">
-              1000 <span class="text-sm font-medium text-medium">sq ft</span>
-            </p>
-            <p class="text-sm text-medium mt-2">Organized inventory management with systematic racking</p>
+            <p class="text-sm text-brand font-semibold mt-1">Systematic Racking</p>
+            <p class="text-sm text-medium mt-2">Organized inventory management for fast, accurate order fulfillment</p>
           </div>
 
           <div
@@ -1294,14 +1232,16 @@
           <div class="grid lg:grid-cols-2 gap-10 items-center">
             <div>
               <span class="inline-flex items-center gap-2 bg-white/10 text-white text-xs font-semibold uppercase tracking-widest rounded-full px-4 py-1.5">
-                <span class="w-2 h-2 rounded-full bg-cyan"></span> Free tool for retailers
+                <span class="w-2 h-2 rounded-full bg-cyan"></span> Built by a distributor, for distributors
               </span>
               <h2 class="font-display text-3xl md:text-4xl font-extrabold text-white mt-4 leading-tight">
                 Invoice → AIOCD Converter
               </h2>
               <p class="mt-4 text-white/70 text-base md:text-lg max-w-xl">
-                Turn Alkem and GSK supplier invoices into Marg-ready AIOCD CSV files in seconds. Runs entirely in your
-                browser — free, no signup, and your invoice data never leaves your computer.
+                We built this to kill our own purchase-entry headache — now we're sharing it with fellow
+                distributors and stockists. Turn Alkem and GSK supplier invoices into Marg-ready AIOCD CSV files
+                in seconds. Runs entirely in your browser — free, no signup, and your invoice data never leaves
+                your computer.
               </p>
               <div class="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/60">
                 <span class="flex items-center gap-2">
@@ -1319,13 +1259,13 @@
               </div>
               <div class="mt-8 flex flex-wrap gap-3">
                 <a
-                  href="aiocd/app.html"
+                  href="/aiocd/app"
                   class="inline-flex items-center gap-2 px-6 py-3 bg-white text-brand text-sm font-semibold rounded-lg hover:bg-light-grey transition-colors">
                   Launch the converter
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                 </a>
                 <a
-                  href="aiocd/index.html"
+                  href="/aiocd"
                   class="inline-flex items-center gap-2 px-6 py-3 bg-white/10 text-white text-sm font-semibold rounded-lg border border-white/10 hover:shadow-lg transition-all">
                   Learn more
                 </a>
@@ -1377,91 +1317,108 @@
           </p>
         </div>
 
-        <div class="mt-12 grid lg:grid-cols-5 gap-8">
+        <div class="mt-12 max-w-3xl mx-auto space-y-6">
           <!-- Contact Info -->
-          <div class="lg:col-span-2 fade-up space-y-6">
-            <div class="bg-white rounded-2xl border border-soft-grey p-6">
-              <h3 class="font-display font-bold text-dark text-lg mb-4">Contact Information</h3>
-              <div class="space-y-4">
-                <div class="flex items-start gap-3">
-                  <div class="w-9 h-9 rounded-lg bg-brand/10 flex items-center justify-center flex-shrink-0">
-                    <svg
-                      class="w-4 h-4 text-brand"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24">
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <p class="text-sm text-medium">Phone</p>
+          <div class="fade-up bg-white rounded-2xl border border-soft-grey p-6 md:p-8">
+            <h3 class="font-display font-bold text-dark text-lg mb-4">Contact Information</h3>
+            <div class="grid sm:grid-cols-2 gap-6">
+              <div class="flex items-start gap-3">
+                <div class="w-9 h-9 rounded-lg bg-brand/10 flex items-center justify-center flex-shrink-0">
+                  <svg
+                    class="w-4 h-4 text-brand"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                  </svg>
+                </div>
+                <div>
+                  <p class="text-sm text-medium">Phone</p>
+                  <p class="text-sm text-medium mt-1">
+                    For orders
                     <a
                       href="tel:+916268424437"
-                      class="font-semibold text-dark hover:text-brand transition-colors"
+                      class="block font-semibold text-dark hover:text-brand transition-colors"
                       >+91 62684 24437</a
                     >
-                  </div>
-                </div>
-                <div class="flex items-start gap-3">
-                  <div class="w-9 h-9 rounded-lg bg-brand/10 flex items-center justify-center flex-shrink-0">
-                    <svg
-                      class="w-4 h-4 text-brand"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24">
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <p class="text-sm text-medium">Email</p>
+                  </p>
+                  <p class="text-sm text-medium mt-2">
+                    For business enquiries
                     <a
-                      href="mailto:ashoktrders72@gmail.com"
-                      class="font-semibold text-dark hover:text-brand transition-colors"
-                      >ashoktrders72@gmail.com</a
+                      href="tel:+919425058725"
+                      class="block font-semibold text-dark hover:text-brand transition-colors"
+                      >+91 94250 58725</a
                     >
-                  </div>
+                  </p>
                 </div>
-                <div class="flex items-start gap-3">
-                  <div class="w-9 h-9 rounded-lg bg-brand/10 flex items-center justify-center flex-shrink-0">
-                    <svg
-                      class="w-4 h-4 text-brand"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24">
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <p class="text-sm text-medium">Address</p>
-                    <p class="font-semibold text-dark">
-                      Ashok Traders, LG 54 Dawa Bazar, RNT Marg<br />Indore, Madhya Pradesh 452001
-                    </p>
-                  </div>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-9 h-9 rounded-lg bg-brand/10 flex items-center justify-center flex-shrink-0">
+                  <svg
+                    class="w-4 h-4 text-brand"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <div>
+                  <p class="text-sm text-medium">Email</p>
+                  <a
+                    href="mailto:ashoktrders72@gmail.com"
+                    class="font-semibold text-dark hover:text-brand transition-colors"
+                    >ashoktrders72@gmail.com</a
+                  >
+                </div>
+              </div>
+              <div class="flex items-start gap-3 sm:col-span-2">
+                <div class="w-9 h-9 rounded-lg bg-brand/10 flex items-center justify-center flex-shrink-0">
+                  <svg
+                    class="w-4 h-4 text-brand"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <p class="text-sm text-medium">Address</p>
+                  <p class="font-semibold text-dark">
+                    Ashok Traders, LG 54 Dawa Bazar, RNT Marg<br />Indore, Madhya Pradesh 452001
+                  </p>
                 </div>
               </div>
             </div>
+          </div>
 
-            <div class="flex flex-col sm:flex-row gap-3">
+          <!-- Send Message / Email / WhatsApp -->
+          <div class="fade-up fade-up-delay-1 bg-white rounded-2xl border border-soft-grey p-6 md:p-8 text-center">
+            <h3 class="font-display font-bold text-dark text-lg mb-2">Send us a Message</h3>
+            <p class="text-medium text-sm mb-6 max-w-md mx-auto">
+              For the fastest response, please reach us directly by email or WhatsApp — our team typically replies
+              within the same business day.
+            </p>
+            <div class="grid sm:grid-cols-2 gap-4">
               <a
-                href="#"
-                class="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 bg-brand text-white font-semibold rounded-xl hover:bg-brand-hover shadow-lg shadow-brand/20 transition-all text-sm">
+                href="mailto:ashoktrders72@gmail.com?subject=Query%20from%20website"
+                class="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3.5 bg-brand text-white font-semibold rounded-xl hover:bg-brand-hover shadow-lg shadow-brand/20 transition-all text-sm">
                 <svg
                   class="w-4 h-4"
                   fill="none"
@@ -1471,15 +1428,15 @@
                     stroke-linecap="round"
                     stroke-linejoin="round"
                     stroke-width="2"
-                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
+                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
-                Place Order via Pharmarack
+                Email Us
               </a>
               <a
                 href="https://wa.me/919584258725"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 bg-[#25D366] text-white font-semibold rounded-xl hover:bg-[#20BD5A] transition-colors text-sm">
+                class="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3.5 bg-[#25D366] text-white font-semibold rounded-xl hover:bg-[#20BD5A] transition-colors text-sm">
                 <svg
                   class="w-4 h-4"
                   fill="currentColor"
@@ -1490,123 +1447,6 @@
                 Chat on WhatsApp
               </a>
             </div>
-          </div>
-
-          <!-- Contact Form -->
-          <div class="lg:col-span-3 fade-up fade-up-delay-1">
-            <form
-              id="contact-form"
-              class="bg-white rounded-2xl border border-soft-grey p-6 md:p-8"
-              action="https://api.web3forms.com/submit"
-              method="POST">
-              <h3 class="font-display font-bold text-dark text-lg mb-6">Send us a Message</h3>
-
-              <!-- Web3Forms hidden fields -->
-              <input
-                type="hidden"
-                name="access_key"
-                value="852a3c3b-f31e-4d6d-9d9f-a90bdf9d9169" />
-              <input
-                type="hidden"
-                name="subject"
-                value="Query from website" />
-              <input
-                type="hidden"
-                name="from_name"
-                value="Ashok Traders Website" />
-              <input
-                type="checkbox"
-                name="botcheck"
-                class="hidden"
-                style="display: none"
-                tabindex="-1"
-                autocomplete="off" />
-
-              <div class="grid sm:grid-cols-2 gap-4">
-                <div>
-                  <label
-                    class="block text-sm font-medium text-dark mb-1.5"
-                    for="name"
-                    >Full Name</label
-                  >
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    required
-                    placeholder="Your name"
-                    class="w-full px-4 py-3 bg-light-grey border border-soft-grey rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all" />
-                </div>
-                <div>
-                  <label
-                    class="block text-sm font-medium text-dark mb-1.5"
-                    for="phone"
-                    >Phone Number</label
-                  >
-                  <input
-                    type="tel"
-                    id="phone"
-                    name="phone"
-                    required
-                    placeholder="+91 XXXXX XXXXX"
-                    class="w-full px-4 py-3 bg-light-grey border border-soft-grey rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all" />
-                </div>
-                <div>
-                  <label
-                    class="block text-sm font-medium text-dark mb-1.5"
-                    for="email"
-                    >Email</label
-                  >
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    placeholder="your@email.com"
-                    class="w-full px-4 py-3 bg-light-grey border border-soft-grey rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all" />
-                </div>
-                <div>
-                  <label
-                    class="block text-sm font-medium text-dark mb-1.5"
-                    for="type"
-                    >I am a</label
-                  >
-                  <select
-                    id="type"
-                    name="type"
-                    class="w-full px-4 py-3 bg-light-grey border border-soft-grey rounded-xl text-sm text-medium focus:outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all">
-                    <option value="">Select type</option>
-                    <option value="Retailer">Retailer</option>
-                    <option value="Hospital / Clinic">Hospital / Clinic</option>
-                    <option value="Pharma Company">Pharma Company</option>
-                    <option value="Other">Other</option>
-                  </select>
-                </div>
-              </div>
-              <div class="mt-4">
-                <label
-                  class="block text-sm font-medium text-dark mb-1.5"
-                  for="message"
-                  >Message</label
-                >
-                <textarea
-                  id="message"
-                  name="message"
-                  rows="4"
-                  placeholder="How can we help you?"
-                  class="w-full px-4 py-3 bg-light-grey border border-soft-grey rounded-xl text-sm resize-none focus:outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all"></textarea>
-              </div>
-              <button
-                id="contact-submit"
-                type="submit"
-                class="mt-6 w-full sm:w-auto px-8 py-3.5 bg-brand text-white font-semibold rounded-xl hover:bg-brand-hover shadow-lg shadow-brand/20 transition-all disabled:opacity-60 disabled:cursor-not-allowed">
-                Send Message
-              </button>
-              <p
-                id="contact-status"
-                class="mt-4 text-sm hidden"
-                role="status"
-                aria-live="polite"></p>
-            </form>
           </div>
         </div>
       </div>
@@ -1661,12 +1501,12 @@
               >Partner</a
             >
             <a
-              href="catalog.html"
+              href="/catalog"
               class="hover:text-white transition-colors"
               >Catalog</a
             >
             <a
-              href="aiocd/index.html"
+              href="/aiocd"
               class="hover:text-white transition-colors"
               >AIOCD Converter</a
             >
@@ -1690,47 +1530,47 @@
           <p class="text-xs font-semibold uppercase tracking-widest text-white/40 mb-3">Our Services</p>
           <div class="flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/50">
             <a
-              href="pharma-distributor-indore.html"
+              href="/pharma-distributor-indore"
               class="hover:text-white transition-colors"
               >Pharma Distributor in Indore</a
             >
             <a
-              href="pharma-stockist-indore.html"
+              href="/pharma-stockist-indore"
               class="hover:text-white transition-colors"
               >Pharma Stockist in Indore</a
             >
             <a
-              href="medicine-wholesaler-indore.html"
+              href="/medicine-wholesaler-indore"
               class="hover:text-white transition-colors"
               >Medicine Wholesaler in Indore</a
             >
             <a
-              href="hospital-medicine-supplier.html"
+              href="/hospital-medicine-supplier"
               class="hover:text-white transition-colors"
               >Hospital Medicine Supplier</a
             >
             <a
-              href="generic-medicine-distributor.html"
+              href="/generic-medicine-distributor"
               class="hover:text-white transition-colors"
               >Generic Medicine Distributor</a
             >
             <a
-              href="cold-chain-pharma-logistics.html"
+              href="/cold-chain-pharma-logistics"
               class="hover:text-white transition-colors"
               >Cold Chain Pharma Logistics</a
             >
             <a
-              href="super-stockist-services.html"
+              href="/super-stockist-services"
               class="hover:text-white transition-colors"
               >Super Stockist Services</a
             >
             <a
-              href="pharma-distribution-partner.html"
+              href="/pharma-distribution-partner"
               class="hover:text-white transition-colors"
               >Pharma Distribution Partner</a
             >
             <a
-              href="pharmaceutical-distributor-central-india.html"
+              href="/pharmaceutical-distributor-central-india"
               class="hover:text-white transition-colors"
               >Pharma Distributor Central India</a
             >
@@ -1756,7 +1596,7 @@
         </svg>
       </a>
       <a
-        href="#contact"
+        href="/order"
         class="group w-14 h-14 bg-brand rounded-full flex items-center justify-center shadow-lg shadow-brand/30 hover:shadow-xl hover:shadow-brand/40 hover:scale-110 hover:bg-brand-hover transition-all"
         aria-label="Place Order">
         <svg
@@ -1777,18 +1617,32 @@
     <script>
       // Render the partner-logos carousel from a single source list.
       const partnerLogos = [
-        { src: 'assets/logos/aglowmed.png', alt: 'Aglowmed', h: 'h-12' },
+        { src: 'assets/logos/aglowmed.png', alt: 'Aglowmed', h: 'h-16' },
         { src: 'assets/logos/alembic.png', alt: 'Alembic', h: 'h-8' },
         { src: 'assets/logos/alkem.svg', alt: 'Alkem', h: 'h-8' },
+        { src: 'assets/logos/appena.webp', alt: 'Appena', h: 'h-16' },
+        { src: 'assets/logos/arrient.jpeg', alt: 'Arrient', h: 'h-16' },
         { src: 'assets/logos/bluecross.png', alt: 'Bluecross', h: 'h-16' },
         { src: 'assets/logos/boehringer.png', alt: 'Boehringer', h: 'h-9' },
-        { src: 'assets/logos/british.png', alt: 'British', h: 'h-10' },
-        { src: 'assets/logos/cavin.jpeg', alt: 'Cavin', h: 'h-9' },
-        { src: 'assets/logos/gsk.png', alt: 'GSK', h: 'h-4' },
+        { src: 'assets/logos/british.png', alt: 'British', h: 'h-14' },
+        { src: 'assets/logos/cavin.jpeg', alt: 'Cavin', h: 'h-16' },
+        { src: 'assets/logos/celegenex.png', alt: 'Celegenex', h: 'h-4' },
+        { src: 'assets/logos/cipla.jpeg', alt: 'Cipla', h: 'h-10' },
+        { src: 'assets/logos/depson.png', alt: 'Depsons Pharma', h: 'h-16' },
+        { src: 'assets/logos/gsk.png', alt: 'GSK', h: 'h-8' },
         { src: 'assets/logos/himalaya.svg', alt: 'Himalaya', h: 'h-8' },
-        { src: 'assets/logos/menarini.png', alt: 'Menarini', h: 'h-10' },
+        { src: 'assets/logos/indoco.png', alt: 'Indoco', h: 'h-14' },
+        { src: 'assets/logos/intas.png', alt: 'Intas', h: 'h-12' },
+        { src: 'assets/logos/koye.png', alt: 'Koye', h: 'h-10' },
+        { src: 'assets/logos/lilly.jpeg', alt: 'Lilly', h: 'h-14' },
+        { src: 'assets/logos/lupin.png', alt: 'Lupin', h: 'h-16' },
+        { src: 'assets/logos/menarini.png', alt: 'Menarini', h: 'h-16' },
+        { src: 'assets/logos/modimundi.jpeg', alt: 'Modi Mundipharma', h: 'h-14' },
+        { src: 'assets/logos/onestep.png', alt: 'One Step Pharma', h: 'h-10' },
+        { src: 'assets/logos/raptakos.jpeg', alt: 'Raptakos Brett', h: 'h-16' },
+        { src: 'assets/logos/rpg.png', alt: 'RPG Life Sciences', h: 'h-12' },
         { src: 'assets/logos/sun-pharma.jpeg', alt: 'Sun Pharma', h: 'h-16' },
-        { src: 'assets/logos/torrent.png', alt: 'Torrent', h: 'h-16' },
+        { src: 'assets/logos/torrent.png', alt: 'Torrent', h: 'h-10' },
       ];
       const buildLogoSet = (ariaHidden) =>
         partnerLogos
@@ -1844,50 +1698,6 @@
         }
       });
 
-      // Contact form: submit to Web3Forms via fetch so visitors stay on page
-      const contactForm = document.getElementById('contact-form');
-      if (contactForm) {
-        const submitBtn = document.getElementById('contact-submit');
-        const statusEl = document.getElementById('contact-status');
-        const originalBtnText = submitBtn.textContent;
-
-        const showStatus = (msg, ok) => {
-          statusEl.textContent = msg;
-          statusEl.classList.remove('hidden', 'text-green-600', 'text-red-600');
-          statusEl.classList.add(ok ? 'text-green-600' : 'text-red-600');
-        };
-
-        contactForm.addEventListener('submit', async (e) => {
-          e.preventDefault();
-          submitBtn.disabled = true;
-          submitBtn.textContent = 'Sending…';
-          statusEl.classList.add('hidden');
-
-          try {
-            const formData = new FormData(contactForm);
-            const res = await fetch(contactForm.action, {
-              method: 'POST',
-              body: formData,
-              headers: { Accept: 'application/json' },
-            });
-            const data = await res.json().catch(() => ({}));
-            if (res.ok && data.success) {
-              contactForm.reset();
-              showStatus('Thank you! Your message has been sent. We will get back to you shortly.', true);
-            } else {
-              showStatus(
-                (data && data.message) || 'Something went wrong. Please try again or call us directly.',
-                false,
-              );
-            }
-          } catch (err) {
-            showStatus('Network error. Please check your connection and try again.', false);
-          } finally {
-            submitBtn.disabled = false;
-            submitBtn.textContent = originalBtnText;
-          }
-        });
-      }
     </script>
   </body>
 </html>
