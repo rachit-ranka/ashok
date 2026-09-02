@@ -8,7 +8,6 @@ ASTR Healthcare is a static marketing and product discovery website for Ashok Tr
 
 - Tailwind CSS (CDN-loaded) + inline styles
 - PapaParse for CSV parsing
-- Web3Forms for contact submission
 - No build process or framework
 
 ---
@@ -58,11 +57,11 @@ Fonts: Inter (body), Poppins (display)
 4. Render: batch 50 items, "Load More" pagination
 5. Highlight matching terms inline with `.highlight` class
 
-### Form Handling
+### Contact Section
 
-- Contact form (index.html) uses Web3Forms API key embedded
-- Fetch submission (not form reload) keeps user on page
-- Status feedback via `#contact-status` element
+- No third-party form service (Web3Forms was removed — it was leaking submitted data)
+- Contact section (index.html) directs visitors to `mailto:` and `wa.me` links instead of a hosted form
+- Phone/email/WhatsApp links appear both in the Contact Info card and the CTA card
 
 ### Mobile Menu
 
@@ -76,7 +75,7 @@ Fonts: Inter (body), Poppins (display)
 
 | File                        | Role           | Notes                                            |
 | --------------------------- | -------------- | ------------------------------------------------ |
-| `index.html`                | Marketing hub  | 830+ lines; 12+ sections; contact form           |
+| `index.html`                | Marketing hub  | 830+ lines; 12+ sections; email/WhatsApp contact |
 | `catalog.html`              | Product search | 410 lines; CSV parsing; debounced search         |
 | `assets/Ashok Stock.csv`    | Inventory      | Data source; columns: name, Salt, company, mrp   |
 | `assets/ashok-collatorals/` | Brand assets   | Logos, company images; preloaded for performance |
@@ -117,8 +116,7 @@ Fonts: Inter (body), Poppins (display)
 - **Tailwind CSS**: CDN (`https://cdn.tailwindcss.com`) loaded in head
 - **PapaParse**: CDN (`https://cdnjs.cloudflare.com/ajax/libs/PapaParse`) for CSV parsing
 - **Google Fonts**: Preconnected for Inter/Poppins (async load)
-- **Web3Forms**: Contact API endpoint (key: `852a3c3b-f31e-4d6d-9d9f-a90bdf9d9169`)
-- **WhatsApp**: Floating button links to hardcoded number (update in both files)
+- **WhatsApp**: Floating button and contact CTA link to hardcoded number (update in both files)
 
 ### Cross-File Coordination
 
@@ -144,7 +142,7 @@ Fonts: Inter (body), Poppins (display)
 - Phone: `+919425058725` (appears in contact section + WhatsApp link)
 - Email: `ashoktrders72@gmail.com`
 - Address: LG 54 Dawa Bazar, RNT Marg, Indore 452001
-- WhatsApp number: `919876543210` (update in floating button + form links)
+- WhatsApp number: `919584258725` (update in floating button + contact CTA links)
 
 ### Fixing Search Performance
 
@@ -159,13 +157,11 @@ Fonts: Inter (body), Poppins (display)
 - **CSV not loading**: Check browser Network tab; ensure path `assets/Ashok Stock.csv` is correct; verify CORS if served remotely
 - **Search not working**: Open DevTools → verify `allData` populated; check CSV column names match parser (case-sensitive: `name`, `Salt`, `company`, `mrp`)
 - **Animations not showing**: Confirm `.fade-up` elements are in viewport during scroll; check `IntersectionObserver` support (IE11 needs polyfill)
-- **Form submissions failing**: Check Web3Forms API key; open Network tab to see response from `api.web3forms.com`
 
 ---
 
 ## Next Steps & Maintenance
 
 - Periodically audit CSV for duplicate medicines or missing fields
-- Monitor Web3Forms submissions for spam; consider adding reCAPTCHA if needed
 - Test catalog search with 5000+ medicine entries; consider server-side search if performance degrades
 - Keep partner logo dimensions consistent for carousel aesthetics

@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Invoice → AIOCD Converter | Ashok Traders</title>
-<meta name="description" content="Free tool by Ashok Traders. Convert Alkem and GSK supplier invoices into Marg-ready AIOCD CSV files in seconds. Runs entirely in your browser — your data never leaves your computer.">
-<link rel="canonical" href="https://astrhealthcare.in/aiocd/">
+<meta name="description" content="A free tool built by pharma distributor Ashok Traders for fellow distributors and stockists. Convert Alkem, GSK, RPG Life Sciences, Depsons Pharma and Boehringer Ingelheim supplier invoices into Marg-ready AIOCD CSV files in seconds. Runs entirely in your browser — your data never leaves your computer.">
+<link rel="canonical" href="https://astrhealthcare.in/aiocd">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/ashok-collatorals/favicon/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="../assets/ashok-collatorals/favicon/favicon-16x16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="../assets/ashok-collatorals/favicon/apple-touch-icon.png">
@@ -42,6 +42,7 @@
   nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.9);backdrop-filter:blur(12px);
     border-bottom:1px solid rgba(229,231,235,.6)}
   .nav-in{display:flex;align-items:center;justify-content:space-between;height:64px;gap:16px}
+  .nav-left{display:flex;align-items:center;gap:36px}
   .brand{display:flex;align-items:center;gap:10px}
   .brand img{width:36px;height:36px;border-radius:8px;object-fit:cover}
   .brand .word{font-family:'Poppins',sans-serif;font-weight:700;color:var(--brand);font-size:18px;letter-spacing:-0.02em}
@@ -132,19 +133,19 @@
 
 <nav>
   <div class="wrap nav-in">
-    <a class="brand" href="../index.html">
-      <img src="../assets/ashok-collatorals/logo-sm.jpg" alt="Ashok Traders" width="36" height="36">
-      <span class="word">Ashok Traders</span>
-    </a>
-    <div class="nav-links">
-      <a href="../index.html#about">About</a>
-      <a href="../index.html#brands">Brands</a>
-      <a href="../catalog.html">Catalog</a>
-      <a href="#how">How it works</a>
-      <a class="active" href="index.html">Converter</a>
+    <div class="nav-left">
+      <a class="brand" href="/">
+        <img src="../assets/ashok-collatorals/logo-sm.jpg" alt="Ashok Traders" width="36" height="36">
+        <span class="word">Ashok Traders</span>
+      </a>
+      <div class="nav-links">
+        <a href="/#about">About</a>
+        <a class="active" href="/aiocd">AIOCD Convertor</a>
+        <a href="/catalog">Catalog</a>
+      </div>
     </div>
     <div class="nav-right">
-      <a class="btn btn-primary nav-cta" href="app.html">Launch tool <span class="arrow">→</span></a>
+      <a class="btn btn-primary nav-cta" href="/aiocd/app">Launch tool <span class="arrow">→</span></a>
     </div>
   </div>
 </nav>
@@ -153,9 +154,9 @@
   <div class="wrap">
     <span class="pill"><span class="dot"></span> Free · runs in your browser · no signup</span>
     <h1>Turn supplier invoices into <span class="accent">Marg-ready AIOCD</span> files</h1>
-    <p class="sub">Upload an Alkem or GSK invoice, check the line items, and download a clean AIOCD CSV for one-click purchase import into Marg. It all runs on your own computer.</p>
+    <p class="sub">Built by Ashok Traders — a pharma distributor — for fellow distributors and stockists tired of re-typing supplier invoices into Marg. Upload an invoice from Alkem, GSK, RPG Life Sciences, Depsons Pharma or Boehringer Ingelheim, check the line items, and download a clean AIOCD CSV for one-click purchase import. It all runs on your own computer.</p>
     <div class="hero-cta">
-      <a class="btn btn-primary" href="app.html">Launch the converter <span class="arrow">→</span></a>
+      <a class="btn btn-primary" href="/aiocd/app">Launch the converter <span class="arrow">→</span></a>
       <a class="btn btn-ghost" href="#how">See how it works</a>
     </div>
     <p class="hero-note">No installation. No account. Your invoice data never leaves your browser.</p>
@@ -191,12 +192,12 @@
     <h2 class="sec-title">From invoice to Marg in four steps</h2>
     <p class="sec-sub">No manual re-typing. No spreadsheet gymnastics. Just upload, glance, download.</p>
     <div class="steps">
-      <div class="step"><div class="num">1</div><h3>Upload</h3><p>Drop the invoice PDF (Alkem) or the XLS export (GSK). Multi-page invoices are fine.</p></div>
+      <div class="step"><div class="num">1</div><h3>Upload</h3><p>Drop the invoice PDF (Alkem, RPG, Depsons, Boehringer) or the XLS export (GSK). Multi-page invoices are fine.</p></div>
       <div class="step"><div class="num">2</div><h3>Auto-extract</h3><p>Products, batch, expiry, MRP, PTR/PTS, GST, discounts and free goods are read for you.</p></div>
       <div class="step"><div class="num">3</div><h3>Verify</h3><p>Eyeball the editable grid, fix anything, pick rounding. Totals recalculate live.</p></div>
       <div class="step"><div class="num">4</div><h3>Download &amp; import</h3><p>Get the AIOCD CSV and import it straight into Marg as a purchase.</p></div>
     </div>
-    <div style="text-align:center;margin-top:44px"><a class="btn btn-primary" href="app.html">Try it now <span class="arrow">→</span></a></div>
+    <div style="text-align:center;margin-top:44px"><a class="btn btn-primary" href="/aiocd/app">Try it now <span class="arrow">→</span></a></div>
   </div>
 </section>
 
@@ -226,6 +227,9 @@
     <div class="sup-grid">
       <div class="sup"><div class="name">Alkem Laboratories</div><div class="tag">PDF invoice</div></div>
       <div class="sup"><div class="name">GlaxoSmithKline (GSK)</div><div class="tag">XLS export</div></div>
+      <div class="sup"><div class="name">RPG Life Sciences</div><div class="tag">PDF invoice</div></div>
+      <div class="sup"><div class="name">Depsons Pharma</div><div class="tag">PDF invoice</div></div>
+      <div class="sup"><div class="name">Boehringer Ingelheim</div><div class="tag">PDF invoice</div></div>
       <div class="sup more"><div class="name">+ more coming soon</div></div>
     </div>
   </div>
@@ -233,15 +237,15 @@
 
 <div class="cta-band">
   <h2>Stop re-typing invoices into Marg</h2>
-  <p>Convert your next Alkem or GSK invoice in under a minute — free, private, and made for Marg.</p>
-  <div><a class="btn btn-primary" href="app.html">Launch the converter →</a></div>
+  <p>Convert your next Alkem, GSK, RPG, Depsons or Boehringer invoice in under a minute — free, private, and made for Marg.</p>
+  <div><a class="btn btn-primary" href="/aiocd/app">Launch the converter →</a></div>
 </div>
 
 <footer>
   <div class="wrap">
     <div class="foot-grid">
       <div>
-        <a class="foot-brand" href="../index.html">
+        <a class="foot-brand" href="/">
           <img src="../assets/ashok-collatorals/logo-sm.jpg" alt="Ashok Traders" width="40" height="40">
           <span class="word">Ashok Traders</span>
         </a>
@@ -250,22 +254,22 @@
       </div>
       <div class="foot-col">
         <h4>Company</h4>
-        <a href="../index.html#about">About</a>
-        <a href="../index.html#brands">Brands</a>
-        <a href="../catalog.html">Medicine Catalog</a>
-        <a href="../index.html#contact">Contact</a>
+        <a href="/#about">About</a>
+        <a href="/#brands">Brands</a>
+        <a href="/catalog">Medicine Catalog</a>
+        <a href="/#contact">Contact</a>
       </div>
       <div class="foot-col">
         <h4>Tools</h4>
-        <a href="index.html">AIOCD Converter</a>
-        <a href="app.html">Launch the tool</a>
+        <a href="/aiocd">AIOCD Converter</a>
+        <a href="/aiocd/app">Launch the tool</a>
         <a href="#how">How it works</a>
         <a href="#suppliers">Supported suppliers</a>
       </div>
     </div>
     <div class="foot-bottom">
       <span>&copy; <span id="yr"></span> Ashok Traders. All rights reserved.</span>
-      <span>A free tool for pharma retailers, by Ashok Traders.</span>
+      <span>A free tool for fellow pharma distributors, by Ashok Traders.</span>
     </div>
   </div>
 </footer>
