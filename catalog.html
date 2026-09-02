@@ -386,7 +386,7 @@
             Available <span class="text-brand">Medicines</span>
           </h1>
           <p class="mt-3 text-medium max-w-2xl mx-auto">
-            Search our complete stock by medicine name, drug/salt composition, or company name.
+            Search our complete stock by medicine name, salt, composition, company, division or SKU.
           </p>
         </div>
 
@@ -409,7 +409,7 @@
             <input
               type="text"
               id="search-input"
-              placeholder="Search by medicine name, salt/drug, or company..."
+              placeholder="Search by medicine, salt, composition, company or SKU..."
               class="search-glow w-full pl-12 pr-4 py-4 bg-light-grey border-2 border-soft-grey rounded-2xl text-base focus:outline-none focus:border-brand transition-all"
               autocomplete="off" />
             <div class="absolute inset-y-0 right-0 pr-4 flex items-center">
@@ -434,7 +434,7 @@
 
           <!-- Filter Chips -->
           <div class="mt-4 flex flex-wrap items-center gap-2">
-            <span class="text-xs font-medium text-medium">Filter by:</span>
+            <span class="text-xs font-medium text-medium">Search in:</span>
             <button
               data-filter="all"
               class="filter-chip active px-3 py-1.5 rounded-full text-xs font-semibold border transition-all bg-brand text-white border-brand">
@@ -451,9 +451,47 @@
               Drug / Salt
             </button>
             <button
+              data-filter="composition"
+              class="filter-chip px-3 py-1.5 rounded-full text-xs font-semibold border transition-all bg-white text-medium border-soft-grey hover:border-brand hover:text-brand">
+              Composition
+            </button>
+            <button
               data-filter="company"
               class="filter-chip px-3 py-1.5 rounded-full text-xs font-semibold border transition-all bg-white text-medium border-soft-grey hover:border-brand hover:text-brand">
               Company
+            </button>
+            <button
+              data-filter="sku"
+              class="filter-chip px-3 py-1.5 rounded-full text-xs font-semibold border transition-all bg-white text-medium border-soft-grey hover:border-brand hover:text-brand">
+              SKU
+            </button>
+          </div>
+
+          <!-- Facet Dropdowns -->
+          <div class="mt-3 flex flex-wrap items-center gap-2">
+            <span class="text-xs font-medium text-medium">Narrow by:</span>
+            <select
+              id="facet-form"
+              aria-label="Filter by dosage form"
+              class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-dark border border-soft-grey hover:border-brand focus:outline-none focus:border-brand transition-colors">
+              <option value="">All dosage forms</option>
+            </select>
+            <select
+              id="facet-company"
+              aria-label="Filter by company"
+              class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-dark border border-soft-grey hover:border-brand focus:outline-none focus:border-brand transition-colors">
+              <option value="">All companies</option>
+            </select>
+            <select
+              id="facet-division"
+              aria-label="Filter by division"
+              class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-dark border border-soft-grey hover:border-brand focus:outline-none focus:border-brand transition-colors">
+              <option value="">All divisions</option>
+            </select>
+            <button
+              id="reset-facets"
+              class="hidden px-3 py-1.5 rounded-lg text-xs font-semibold text-brand border border-brand/25 hover:bg-brand hover:text-white transition-colors">
+              Reset filters
             </button>
           </div>
         </div>
@@ -576,26 +614,78 @@
     </footer>
 
     <script>
+      // Field order must match COLUMNS in scripts/build-catalog.py.
+      const FIELDS = [
+        'name',
+        'salt',
+        'mrp',
+        'company',
+        'packing',
+        'form',
+        'composition',
+        'segment',
+        'indication',
+        'division',
+        'sku',
+      ];
+
       let allData = [];
       let filteredData = [];
       let currentFilter = 'all';
       let displayCount = 20;
       const BATCH_SIZE = 20;
 
+      // Collapse spacing around '+' and '|' so "amlodipine+bisoprolol" and
+      // "Amlodipine | Bisoprolol" both match either spelling.
+      function normalize(text) {
+        return (text || '')
+          .toLowerCase()
+          .replace(/\s*[|+]\s*/g, '+')
+          .replace(/\s+/g, ' ')
+          .trim();
+      }
+
       document.addEventListener('DOMContentLoaded', () => {
         fetch('assets/catalog.json')
           .then((r) => r.json())
           .then((rows) => {
-            allData = rows.map((r) => ({
-              name: r[0],
-              salt: r[1],
-              mrp: r[2],
-              company: r[3],
-            }));
+            allData = rows.map((row) => {
+              const item = {};
+              FIELDS.forEach((field, i) => {
+                item[field] = row[i] || '';
+              });
+              // Precomputed haystacks keep filtering fast across 3,000+ rows.
+              item._name = normalize(item.name);
+              item._salt = normalize(item.salt);
+              item._composition = normalize(item.composition);
+              item._company = normalize(item.company);
+              item._sku = normalize(item.sku);
+              item._all = normalize(
+                [
+                  item.name,
+                  item.salt,
+                  item.composition,
+                  item.company,
+                  item.division,
+                  item.form,
+                  item.packing,
+                  item.segment,
+                  item.indication,
+                  item.sku,
+                ].join(' ')
+              );
+              return item;
+            });
             document.getElementById('total-count').textContent = allData.length.toLocaleString();
             document.getElementById('loading-state').classList.add('hidden');
             document.getElementById('initial-state').classList.add('hidden');
+            assignCompanyGroups(allData);
+            buildFacets();
             performSearch('');
+          })
+          .catch(() => {
+            document.getElementById('loading-state').classList.add('hidden');
+            document.getElementById('empty-state').classList.remove('hidden');
           });
       });
 
@@ -608,6 +698,73 @@
       const loadMoreBtn = document.getElementById('load-more-btn');
       const resultsCount = document.getElementById('results-count');
       const showingInfo = document.getElementById('showing-info');
+      const facetForm = document.getElementById('facet-form');
+      const facetCompany = document.getElementById('facet-company');
+      const facetDivision = document.getElementById('facet-division');
+      const resetFacets = document.getElementById('reset-facets');
+
+      // The export spells one manufacturer several ways ("ALKEM LABORATORIES LTD",
+      // "ALKEM LAB.", "ALKEM PHARMA", the typo "ALKEM LABORATRIES LTD"). Group them
+      // so the company filter shows a manufacturer once instead of nine times; the
+      // card still displays whatever the catalog actually says.
+      const COMPANY_SUFFIX =
+        /\s+(LTD|LIMITED|PVT|PRIVATE|PLTD|LABS?|LABORATORY|LABORATORIES|LABORATRIES|PHARMACEUTICALS?|PHARMA|HEALTHCARE|BIOSCIENCES?|LIFE SCIENCES?|INDIA|CO|COMPANY|LLP|INC|DRUG)$/;
+
+      function companyKey(name) {
+        let s = name
+          .toUpperCase()
+          .replace(/[^A-Z0-9\s]/g, ' ')
+          .replace(/\s+/g, ' ')
+          .trim();
+        let prev = null;
+        while (prev !== s) {
+          prev = s;
+          s = s.replace(COMPANY_SUFFIX, '').trim();
+        }
+        return s || name.toUpperCase();
+      }
+
+      // Label each group with its most common spelling in the data.
+      function assignCompanyGroups(items) {
+        const variants = new Map();
+        items.forEach((item) => {
+          if (!item.company) return;
+          const key = companyKey(item.company);
+          if (!variants.has(key)) variants.set(key, new Map());
+          const seen = variants.get(key);
+          seen.set(item.company, (seen.get(item.company) || 0) + 1);
+        });
+        const label = new Map();
+        variants.forEach((seen, key) => {
+          const best = [...seen.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+          label.set(key, best[0][0]);
+        });
+        items.forEach((item) => {
+          item.companyGroup = item.company ? label.get(companyKey(item.company)) : '';
+        });
+      }
+
+      // Populate the dropdowns from the data so they never drift from the catalog.
+      function buildFacets() {
+        const fill = (select, field) => {
+          const counts = new Map();
+          allData.forEach((item) => {
+            const value = item[field];
+            if (value) counts.set(value, (counts.get(value) || 0) + 1);
+          });
+          [...counts.entries()]
+            .sort((a, b) => a[0].localeCompare(b[0]))
+            .forEach(([value, count]) => {
+              const option = document.createElement('option');
+              option.value = value;
+              option.textContent = `${value} (${count})`;
+              select.appendChild(option);
+            });
+        };
+        fill(facetForm, 'form');
+        fill(facetCompany, 'companyGroup');
+        fill(facetDivision, 'division');
+      }
 
       let debounceTimer;
       searchInput.addEventListener('input', function () {
@@ -622,6 +779,17 @@
         clearBtn.classList.add('hidden');
         performSearch('');
         searchInput.focus();
+      });
+
+      [facetForm, facetCompany, facetDivision].forEach((select) => {
+        select.addEventListener('change', () => performSearch(searchInput.value.trim()));
+      });
+
+      resetFacets.addEventListener('click', () => {
+        facetForm.value = '';
+        facetCompany.value = '';
+        facetDivision.value = '';
+        performSearch(searchInput.value.trim());
       });
 
       // Filter chips
@@ -646,35 +814,30 @@
       function performSearch(query) {
         displayCount = BATCH_SIZE;
 
-        if (!query) {
-          filteredData = allData;
-          initialState.classList.add('hidden');
+        const selectedForm = facetForm.value;
+        const selectedCompany = facetCompany.value;
+        const selectedDivision = facetDivision.value;
+        const hasFacets = Boolean(selectedForm || selectedCompany || selectedDivision);
+        resetFacets.classList.toggle('hidden', !hasFacets);
 
-          if (filteredData.length === 0) {
-            resultsGrid.classList.add('hidden');
-            emptyState.classList.remove('hidden');
-            loadMoreContainer.classList.add('hidden');
-            resultsCount.textContent = 'No results found';
-            showingInfo.textContent = '';
-          } else {
-            emptyState.classList.add('hidden');
-            resultsGrid.classList.remove('hidden');
-            renderResults();
-          }
-          return;
-        }
+        const terms = normalize(query).split(' ').filter(Boolean);
 
-        const terms = query.toLowerCase().split(/\s+/).filter(Boolean);
+        const haystackFor = {
+          name: '_name',
+          salt: '_salt',
+          composition: '_composition',
+          company: '_company',
+          sku: '_sku',
+        };
 
         filteredData = allData.filter((item) => {
-          const nameMatch = terms.every((t) => item.name.toLowerCase().includes(t));
-          const saltMatch = terms.every((t) => item.salt.toLowerCase().includes(t));
-          const companyMatch = terms.every((t) => item.company.toLowerCase().includes(t));
+          if (selectedForm && item.form !== selectedForm) return false;
+          if (selectedCompany && item.companyGroup !== selectedCompany) return false;
+          if (selectedDivision && item.division !== selectedDivision) return false;
+          if (!terms.length) return true;
 
-          if (currentFilter === 'name') return nameMatch;
-          if (currentFilter === 'salt') return saltMatch;
-          if (currentFilter === 'company') return companyMatch;
-          return nameMatch || saltMatch || companyMatch;
+          const field = haystackFor[currentFilter] || '_all';
+          return terms.every((t) => item[field].includes(t));
         });
 
         initialState.classList.add('hidden');
@@ -696,8 +859,9 @@
         const toShow = filteredData.slice(0, displayCount);
         const query = searchInput.value.trim().toLowerCase();
 
-        const hasQuery = query.length > 0;
-        resultsCount.textContent = hasQuery
+        const isFiltered =
+          query.length > 0 || Boolean(facetForm.value || facetCompany.value || facetDivision.value);
+        resultsCount.textContent = isFiltered
           ? `${filteredData.length.toLocaleString()} result${filteredData.length !== 1 ? 's' : ''} found`
           : `${filteredData.length.toLocaleString()} medicines available`;
         showingInfo.textContent =
@@ -708,27 +872,70 @@
         resultsGrid.innerHTML = toShow
           .map((item) => {
             const name = highlightText(item.name, query);
-            const salt = highlightText(item.salt, query);
             const company = highlightText(item.company, query);
-            const mrp = item.mrp ? `₹${parseFloat(item.mrp).toFixed(2)}` : '—';
+            // A few rows carry a blank or 0.00 MRP; show those as unpriced.
+            const price = parseFloat(item.mrp);
+            const mrp = price > 0 ? `₹${price.toFixed(2)}` : '—';
+
+            // Composition carries the strengths; salts are the plain drug names.
+            const detail = item.composition || item.salt;
+            const saltLine = detail
+              ? highlightText(detail.replace(/\s*\|\s*/g, ' + '), query)
+              : '<span class="italic text-medium/50">Not specified</span>';
+
+            const packing = item.packing
+              ? `<span class="text-xs font-semibold text-dark bg-light-grey px-2 py-0.5 rounded-md">${escapeHtml(
+                  item.packing
+                )}</span>`
+              : '';
+            const form = item.form
+              ? `<span class="text-xs font-semibold text-cyan bg-cyan/10 px-2 py-0.5 rounded-md">${escapeHtml(
+                  item.form
+                )}</span>`
+              : '';
+
+            const segment = item.segment
+              ? `<span class="text-xs text-medium bg-light-grey px-2 py-0.5 rounded-md">${escapeHtml(
+                  item.segment
+                )}</span>`
+              : '';
+            const indication = item.indication
+              ? `<span class="text-xs text-medium bg-light-grey px-2 py-0.5 rounded-md">${escapeHtml(
+                  item.indication
+                )}</span>`
+              : '';
+            const tags = segment || indication ? `<div class="mt-2 flex flex-wrap gap-2">${segment}${indication}</div>` : '';
+
+            const meta = [
+              item.sku ? `SKU ${escapeHtml(item.sku)}` : '',
+              item.division ? `Division: ${escapeHtml(item.division)}` : '',
+            ]
+              .filter(Boolean)
+              .join('<span class="px-2 text-soft-grey">&bull;</span>');
+            const metaRow = meta ? `<p class="mt-2 text-xs text-medium font-medium">${meta}</p>` : '';
 
             return `
           <div class="medicine-card bg-white rounded-xl border border-soft-grey/80 p-4 sm:p-5">
             <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-4">
               <div class="flex-1 min-w-0">
-                <h3 class="font-semibold text-dark text-sm sm:text-base leading-tight">${name}</h3>
+                <div class="flex flex-wrap items-center gap-2">
+                  <h3 class="font-semibold text-dark text-sm sm:text-base leading-tight">${name}</h3>
+                  ${packing}${form}
+                </div>
                 <p class="mt-1.5 text-xs sm:text-sm text-medium leading-relaxed">
-                  <span class="inline-flex items-center gap-1">
-                    <svg class="w-3.5 h-3.5 text-cyan flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
-                    ${salt || '<span class="italic text-medium/50">Not specified</span>'}
+                  <span class="inline-flex items-start gap-1">
+                    <svg class="w-3.5 h-3.5 mt-0.5 text-cyan flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+                    <span>${saltLine}</span>
                   </span>
                 </p>
+                ${tags}
+                ${metaRow}
               </div>
               <div class="flex items-center gap-3 sm:flex-col sm:items-end sm:gap-1.5">
                 <span class="font-display font-bold text-brand text-base sm:text-lg">${mrp}</span>
-                <span class="text-xs text-medium bg-light-grey px-2 py-0.5 rounded-md font-medium truncate max-w-[180px]" title="${
+                <span class="text-xs text-medium bg-light-grey px-2 py-0.5 rounded-md font-medium truncate max-w-[180px]" title="${escapeHtml(
                   item.company
-                }">${company}</span>
+                )}">${company}</span>
               </div>
             </div>
           </div>
@@ -742,7 +949,6 @@
           loadMoreContainer.classList.add('hidden');
         }
       }
-
       function highlightText(text, query) {
         if (!text || !query) return escapeHtml(text);
         const terms = query.split(/\s+/).filter(Boolean);
